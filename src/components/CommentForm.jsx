@@ -1,33 +1,44 @@
-import { useState } from 'react'
-import { createComment } from '../apis/comments.js'
-import { useAuth } from '../hooks/useAuth.js'
-import ErrorMessages from './ErrorMessages.jsx'
-import styles from './Comments.module.css'
+import { useState } from "react";
+
+import { createComment } from "../apis/comments.js";
+import { useAuth } from "../hooks/useAuth.js";
+import ErrorMessages from "./ErrorMessages.jsx";
+
+import styles from "./Comments.module.css";
+
 export default function CommentForm({ slug, onCreated }) {
-  const { handleAuthError } = useAuth()
-  const [body, setBody] = useState('')
-  const [pending, setPending] = useState(false)
-  const [error, setError] = useState(null)
+  const { handleAuthError } = useAuth();
+
+  const [body, setBody] = useState("");
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState(null);
+
   async function handleSubmit(event) {
-    event.preventDefault()
-    if (pending) return
+    event.preventDefault();
+
+    if (pending) return;
+
     if (!body.trim()) {
-      setError('댓글 내용을 입력해 주세요.')
-      return
+      setError("댓글 내용을 입력해 주세요.");
+      return;
     }
-    setError(null)
-    setPending(true)
+
+    setError(null);
+    setPending(true);
+
     try {
-      const { comment } = await createComment(slug, body.trim())
-      onCreated(comment)
-      setBody('')
+      const { comment } = await createComment(slug, body.trim());
+
+      onCreated(comment);
+      setBody("");
     } catch (error) {
-      handleAuthError(error)
-      setError(error)
+      handleAuthError(error);
+      setError(error);
     } finally {
-      setPending(false)
+      setPending(false);
     }
   }
+
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <ErrorMessages error={error} />
@@ -43,9 +54,9 @@ export default function CommentForm({ slug, onCreated }) {
           />
         </label>
         <button className="primary" type="submit">
-          {pending ? '등록 중…' : '댓글 등록'}
+          {pending ? "등록 중…" : "댓글 등록"}
         </button>
       </fieldset>
     </form>
-  )
+  );
 }

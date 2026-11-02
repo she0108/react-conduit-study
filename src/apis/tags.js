@@ -1,4 +1,5 @@
-import { request } from './client.js'
+import { request } from "./client.js";
+
 export function getTags(signal) {
-  return request('/tags', { signal })
+  return request("/tags", { signal });
 }

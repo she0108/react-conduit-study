@@ -1,10 +1,16 @@
-import { Link, useLocation } from 'react-router'
-import { PAGE_SIZE } from '../utils/pagination.js'
-import styles from './Pagination.module.css'
+import { Link, useLocation } from "react-router";
+
+import { PAGE_SIZE } from "../utils/pagination.js";
+
+import styles from "./Pagination.module.css";
+
 export default function Pagination({ page, total }) {
-  const location = useLocation()
-  const count = Math.ceil(total / PAGE_SIZE)
-  if (count <= 1) return null
+  const location = useLocation();
+
+  const count = Math.ceil(total / PAGE_SIZE);
+
+  if (count <= 1) return null;
+
   const pages = [
     ...new Set([
       1,
@@ -13,12 +19,16 @@ export default function Pagination({ page, total }) {
     ]),
   ]
     .filter((value) => value >= 1 && value <= count)
-    .sort((a, b) => a - b)
+    .sort((a, b) => a - b);
+
   function href(value) {
-    const params = new URLSearchParams(location.search)
-    params.set('page', value)
-    return `${location.pathname}?${params}`
+    const params = new URLSearchParams(location.search);
+
+    params.set("page", value);
+
+    return `${location.pathname}?${params}`;
   }
+
   return (
     <nav className={styles.pagination} aria-label="글 목록 페이지">
       {page > 1 && (
@@ -34,7 +44,7 @@ export default function Pagination({ page, total }) {
           <Link
             to={href(value)}
             aria-label={`${value}페이지`}
-            aria-current={value === page ? 'page' : undefined}
+            aria-current={value === page ? "page" : undefined}
           >
             {value}
           </Link>
@@ -46,5 +56,5 @@ export default function Pagination({ page, total }) {
         </Link>
       )}
     </nav>
-  )
+  );
 }

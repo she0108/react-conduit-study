@@ -1,5 +1,7 @@
-import placeholder from '../assets/avatar-placeholder.svg'
-import styles from './Avatar.module.css'
+import placeholder from "../assets/avatar-placeholder.svg";
+
+import styles from "./Avatar.module.css";
+
 export default function Avatar({ image, size = 36 }) {
   return (
     <img
@@ -10,9 +12,9 @@ export default function Avatar({ image, size = 36 }) {
       height={size}
       referrerPolicy="no-referrer"
       onError={(event) => {
-        event.currentTarget.onerror = null
-        event.currentTarget.src = placeholder
+        event.currentTarget.onerror = null;
+        event.currentTarget.src = placeholder;
       }}
     />
-  )
+  );
 }

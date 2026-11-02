@@ -1,43 +1,55 @@
-import { useState } from 'react'
-import { Link, Navigate, useLocation, useNavigate } from 'react-router'
-import { register } from '../apis/auth.js'
-import { useAuth } from '../hooks/useAuth.js'
-import { getReturnPath } from '../utils/returnPath.js'
-import ErrorMessages from '../components/ErrorMessages.jsx'
+import { useState } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router";
+
+import { register } from "../apis/auth.js";
+import { useAuth } from "../hooks/useAuth.js";
+import { getReturnPath } from "../utils/returnPath.js";
+import ErrorMessages from "../components/ErrorMessages.jsx";
+
 export default function RegisterPage() {
-  const { user, setUser } = useAuth()
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState(null)
-  const [pending, setPending] = useState(false)
-  const from = getReturnPath(location.state?.from)
-  if (user) return <Navigate to={from} replace />
+  const { user, setUser } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [pending, setPending] = useState(false);
+
+  const from = getReturnPath(location.state?.from);
+
+  if (user) return <Navigate to={from} replace />;
+
   async function handleSubmit(event) {
-    event.preventDefault()
-    if (pending) return
+    event.preventDefault();
+
+    if (pending) return;
+
     if (!username.trim() || !email.trim() || !password) {
-      setError('이름, 이메일, 비밀번호를 입력해 주세요.')
-      return
+      setError("이름, 이메일, 비밀번호를 입력해 주세요.");
+      return;
     }
-    setPending(true)
-    setError(null)
+
+    setPending(true);
+    setError(null);
+
     try {
       const data = await register({
         username: username.trim(),
         email: email.trim(),
         password,
-      })
-      setUser(data.user)
-      navigate(from, { replace: true })
+      });
+
+      setUser(data.user);
+      navigate(from, { replace: true });
     } catch (error) {
-      setError(error)
+      setError(error);
     } finally {
-      setPending(false)
+      setPending(false);
     }
   }
+
   return (
     <section className="formPage">
       <h1>회원가입</h1>
@@ -79,10 +91,10 @@ export default function RegisterPage() {
             />
           </label>
           <button className="primary" type="submit">
-            {pending ? '가입 중…' : '회원가입'}
+            {pending ? "가입 중…" : "회원가입"}
           </button>
         </fieldset>
       </form>
     </section>
-  )
+  );
 }

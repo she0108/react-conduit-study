@@ -4,12 +4,15 @@
   gap: 0.65rem;
   min-width: 0;
 }
+
 .meta > div {
   min-width: 0;
 }
+
 .meta a {
   overflow-wrap: anywhere;
 }
+
 .meta time {
   display: block;
   color: var(--muted);

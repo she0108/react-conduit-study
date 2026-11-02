@@ -1,14 +1,17 @@
-const key = 'conduit-token'
+const key = "conduit-token";
+
 export function getToken() {
   try {
-    return localStorage.getItem(key)
+    return localStorage.getItem(key);
   } catch {
-    return null
+    return null;
   }
 }
+
 export function saveToken(token) {
-  localStorage.setItem(key, token)
+  localStorage.setItem(key, token);
 }
+
 export function removeToken() {
-  localStorage.removeItem(key)
+  localStorage.removeItem(key);
 }

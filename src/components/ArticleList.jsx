@@ -1,5 +1,6 @@
-import ArticleCard from './ArticleCard.jsx'
-import ErrorMessages from './ErrorMessages.jsx'
+import ArticleCard from "./ArticleCard.jsx";
+import ErrorMessages from "./ErrorMessages.jsx";
+
 export default function ArticleList({
   articles,
   loading,
@@ -12,16 +13,19 @@ export default function ArticleList({
       <p className="status" role="status">
         글을 불러오고 있습니다…
       </p>
-    )
+    );
+
   if (error)
     return (
       <div>
         <ErrorMessages error={error} />
         <button onClick={onRetry}>다시 시도</button>
       </div>
-    )
+    );
+
   if (!articles.length)
-    return <p className="status">아직 게시된 글이 없습니다.</p>
+    return <p className="status">아직 게시된 글이 없습니다.</p>;
+
   return (
     <div>
       {articles.map((article) => (
@@ -32,5 +36,5 @@ export default function ArticleList({
         />
       ))}
     </div>
-  )
+  );
 }

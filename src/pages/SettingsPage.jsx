@@ -1,69 +1,82 @@
-import { startTransition, useState } from 'react'
-import { useNavigate } from 'react-router'
-import { updateUser } from '../apis/auth.js'
-import { useAuth } from '../hooks/useAuth.js'
-import ErrorMessages from '../components/ErrorMessages.jsx'
+import { startTransition, useState } from "react";
+import { useNavigate } from "react-router";
+
+import { updateUser } from "../apis/auth.js";
+import { useAuth } from "../hooks/useAuth.js";
+import ErrorMessages from "../components/ErrorMessages.jsx";
+
 export default function SettingsPage() {
-  const { user, setUser, logout, handleAuthError } = useAuth()
-  const navigate = useNavigate()
+  const { user, setUser, logout, handleAuthError } = useAuth();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
-    image: user.image || '',
+    image: user.image || "",
     username: user.username,
-    bio: user.bio || '',
+    bio: user.bio || "",
     email: user.email,
-    password: '',
-  })
-  const [pending, setPending] = useState(false)
-  const [error, setError] = useState(null)
-  const [saved, setSaved] = useState(false)
+    password: "",
+  });
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState(null);
+  const [saved, setSaved] = useState(false);
+
   function handleChange(event) {
     setForm((previous) => ({
       ...previous,
       [event.target.name]: event.target.value,
-    }))
-    setSaved(false)
+    }));
+    setSaved(false);
   }
+
   async function handleSubmit(event) {
-    event.preventDefault()
-    if (pending) return
+    event.preventDefault();
+
+    if (pending) return;
+
     if (!form.username.trim() || !form.email.trim()) {
-      setError('사용자 이름과 이메일을 입력해 주세요.')
-      return
+      setError("사용자 이름과 이메일을 입력해 주세요.");
+      return;
     }
-    setPending(true)
-    setError(null)
-    setSaved(false)
+
+    setPending(true);
+    setError(null);
+    setSaved(false);
     const payload = {
       image: form.image.trim(),
       username: form.username.trim(),
       bio: form.bio.trim(),
       email: form.email.trim(),
       ...(form.password ? { password: form.password } : {}),
-    }
+    };
+
     try {
-      const { user: updatedUser } = await updateUser(payload)
-      if (!setUser(updatedUser, user.token)) return
+      const { user: updatedUser } = await updateUser(payload);
+
+      if (!setUser(updatedUser, user.token)) return;
+
       setForm({
-        image: updatedUser.image || '',
+        image: updatedUser.image || "",
         username: updatedUser.username,
-        bio: updatedUser.bio || '',
+        bio: updatedUser.bio || "",
         email: updatedUser.email,
-        password: '',
-      })
-      setSaved(true)
+        password: "",
+      });
+      setSaved(true);
     } catch (error) {
-      handleAuthError(error)
-      setError(error)
+      handleAuthError(error);
+      setError(error);
     } finally {
-      setPending(false)
+      setPending(false);
     }
   }
+
   function handleLogout() {
     startTransition(() => {
-      logout()
-      navigate('/', { replace: true })
-    })
+      logout();
+      navigate("/", { replace: true });
+    });
   }
+
   return (
     <section className="formPage">
       <h1>내 설정</h1>
@@ -126,7 +139,7 @@ export default function SettingsPage() {
             비워 두면 기존 비밀번호를 유지합니다.
           </small>
           <button className="primary" type="submit">
-            {pending ? '저장 중…' : '설정 저장'}
+            {pending ? "저장 중…" : "설정 저장"}
           </button>
         </fieldset>
       </form>
@@ -135,5 +148,5 @@ export default function SettingsPage() {
         로그아웃
       </button>
     </section>
-  )
+  );
 }

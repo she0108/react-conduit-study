@@ -1,88 +1,109 @@
-import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
-import { createArticle, getArticle, updateArticle } from '../apis/articles.js'
-import { useAuth } from '../hooks/useAuth.js'
-import ErrorMessages from '../components/ErrorMessages.jsx'
-import styles from './EditorPage.module.css'
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router";
+
+import { createArticle, getArticle, updateArticle } from "../apis/articles.js";
+import { useAuth } from "../hooks/useAuth.js";
+import ErrorMessages from "../components/ErrorMessages.jsx";
+
+import styles from "./EditorPage.module.css";
+
 export default function EditorPage() {
-  const { slug } = useParams()
-  const { user } = useAuth()
-  return <Editor key={`${slug || 'new'}:${user.username}`} slug={slug} />
+  const { slug } = useParams();
+  const { user } = useAuth();
+
+  return <Editor key={`${slug || "new"}:${user.username}`} slug={slug} />;
 }
+
 function Editor({ slug }) {
-  const { user, handleAuthError } = useAuth()
-  const navigate = useNavigate()
+  const { user, handleAuthError } = useAuth();
+  const navigate = useNavigate();
+
   const [article, setArticle] = useState({
-    title: '',
-    description: '',
-    body: '',
+    title: "",
+    description: "",
+    body: "",
     tagList: [],
-  })
-  const [loaded, setLoaded] = useState(!slug)
-  const [loadError, setLoadError] = useState(null)
-  const [forbidden, setForbidden] = useState(false)
-  const [error, setError] = useState(null)
-  const [pending, setPending] = useState(false)
-  const [tagInput, setTagInput] = useState('')
-  const [attempt, setAttempt] = useState(0)
+  });
+  const [loaded, setLoaded] = useState(!slug);
+  const [loadError, setLoadError] = useState(null);
+  const [forbidden, setForbidden] = useState(false);
+  const [error, setError] = useState(null);
+  const [pending, setPending] = useState(false);
+  const [tagInput, setTagInput] = useState("");
+  const [attempt, setAttempt] = useState(0);
+
   useEffect(() => {
-    if (!slug) return
-    const controller = new AbortController()
+    if (!slug) return;
+
+    const controller = new AbortController();
+
     getArticle(slug, controller.signal)
       .then(({ article }) => {
-        if (controller.signal.aborted) return
+        if (controller.signal.aborted) return;
+
         if (article.author.username !== user.username) {
-          setForbidden(true)
-          return
+          setForbidden(true);
+          return;
         }
+
         setArticle({
           title: article.title,
           description: article.description,
           body: article.body,
           tagList: article.tagList,
-        })
-        setLoaded(true)
+        });
+        setLoaded(true);
       })
       .catch((error) => {
         if (!controller.signal.aborted) {
-          handleAuthError(error)
-          setLoadError(error)
+          handleAuthError(error);
+          setLoadError(error);
         }
-      })
-    return () => controller.abort()
-  }, [slug, user.username, attempt, handleAuthError])
+      });
+
+    return () => controller.abort();
+  }, [slug, user.username, attempt, handleAuthError]);
+
   function handleChange(event) {
     setArticle((previous) => ({
       ...previous,
       [event.target.name]: event.target.value,
-    }))
+    }));
   }
+
   function addTag() {
-    const tag = tagInput.trim()
+    const tag = tagInput.trim();
+
     if (tag)
       setArticle((previous) => ({
         ...previous,
         tagList: [...new Set([...previous.tagList, tag])],
-      }))
-    setTagInput('')
+      }));
+
+    setTagInput("");
   }
+
   function handleTagKeyDown(event) {
-    if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
-      event.preventDefault()
-      addTag()
+    if (event.key === "Enter" && !event.nativeEvent.isComposing) {
+      event.preventDefault();
+      addTag();
     }
   }
+
   async function handleSubmit(event) {
-    event.preventDefault()
-    if (pending || !loaded) return
+    event.preventDefault();
+
+    if (pending || !loaded) return;
+
     if (
       ![article.title, article.description, article.body].every((value) =>
         value.trim(),
       )
     ) {
-      setError('제목, 설명, 본문은 공백만 입력할 수 없습니다.')
-      return
+      setError("제목, 설명, 본문은 공백만 입력할 수 없습니다.");
+      return;
     }
+
     const payload = {
       ...article,
       title: article.title.trim(),
@@ -91,23 +112,27 @@ function Editor({ slug }) {
       tagList: [
         ...new Set([...article.tagList, tagInput.trim()].filter(Boolean)),
       ],
-    }
-    setPending(true)
-    setError(null)
+    };
+
+    setPending(true);
+    setError(null);
+
     try {
       const data = slug
         ? await updateArticle(slug, payload)
-        : await createArticle(payload)
+        : await createArticle(payload);
+
       navigate(`/article/${encodeURIComponent(data.article.slug)}`, {
         replace: true,
-      })
+      });
     } catch (error) {
-      handleAuthError(error)
-      setError(error)
+      handleAuthError(error);
+      setError(error);
     } finally {
-      setPending(false)
+      setPending(false);
     }
   }
+
   if (forbidden)
     return (
       <section className="container page">
@@ -115,7 +140,8 @@ function Editor({ slug }) {
         <p>본인이 작성한 글만 수정할 수 있습니다.</p>
         <Link to={`/article/${encodeURIComponent(slug)}`}>글로 돌아가기</Link>
       </section>
-    )
+    );
+
   if (loadError)
     return (
       <section className="container page">
@@ -123,23 +149,25 @@ function Editor({ slug }) {
         <ErrorMessages error={loadError} />
         <button
           onClick={() => {
-            setLoadError(null)
-            setAttempt((value) => value + 1)
+            setLoadError(null);
+            setAttempt((value) => value + 1);
           }}
         >
           다시 시도
         </button>
       </section>
-    )
+    );
+
   if (!loaded)
     return (
       <p className="container status" role="status">
         수정할 글을 불러오고 있습니다…
       </p>
-    )
+    );
+
   return (
     <section className={`formPage ${styles.editor}`}>
-      <h1>{slug ? '글 수정' : '새 글 쓰기'}</h1>
+      <h1>{slug ? "글 수정" : "새 글 쓰기"}</h1>
       <ErrorMessages error={error} />
       <form onSubmit={handleSubmit}>
         <fieldset disabled={pending}>
@@ -210,10 +238,10 @@ function Editor({ slug }) {
             </div>
           </div>
           <button type="submit" className="primary">
-            {pending ? '저장 중…' : slug ? '수정 완료' : '게시하기'}
+            {pending ? "저장 중…" : slug ? "수정 완료" : "게시하기"}
           </button>
         </fieldset>
       </form>
     </section>
-  )
+  );
 }

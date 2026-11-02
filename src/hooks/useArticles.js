@@ -1,18 +1,23 @@
-import { useEffect, useState } from 'react'
-import { getArticles } from '../apis/articles.js'
-import { PAGE_SIZE } from '../utils/pagination.js'
-import { useAuth } from './useAuth.js'
+import { useEffect, useState } from "react";
+
+import { getArticles } from "../apis/articles.js";
+import { PAGE_SIZE } from "../utils/pagination.js";
+import { useAuth } from "./useAuth.js";
+
 export function useArticles({
-  feed = 'global',
-  tag = '',
-  author = '',
-  favorited = '',
+  feed = "global",
+  tag = "",
+  author = "",
+  favorited = "",
   page = 1,
 }) {
-  const { user, handleAuthError } = useAuth()
-  const token = user?.token
-  const [revision, setRevision] = useState(0)
-  const [result, setResult] = useState(null)
+  const { user, handleAuthError } = useAuth();
+
+  const token = user?.token;
+
+  const [revision, setRevision] = useState(0);
+  const [result, setResult] = useState(null);
+
   const key = JSON.stringify([
     feed,
     tag,
@@ -21,9 +26,11 @@ export function useArticles({
     page,
     token,
     revision,
-  ])
+  ]);
+
   useEffect(() => {
-    const controller = new AbortController()
+    const controller = new AbortController();
+
     getArticles(
       {
         feed,
@@ -42,14 +49,16 @@ export function useArticles({
             articles: data.articles,
             total: data.articlesCount,
             error: null,
-          })
+          });
       })
       .catch((error) => {
-        if (controller.signal.aborted) return
-        handleAuthError(error)
-        setResult({ key, articles: [], total: 0, error })
-      })
-    return () => controller.abort()
+        if (controller.signal.aborted) return;
+
+        handleAuthError(error);
+        setResult({ key, articles: [], total: 0, error });
+      });
+
+    return () => controller.abort();
   }, [
     feed,
     tag,
@@ -60,10 +69,12 @@ export function useArticles({
     revision,
     key,
     handleAuthError,
-  ])
+  ]);
+
   function refresh() {
-    setRevision((value) => value + 1)
+    setRevision((value) => value + 1);
   }
+
   function updateArticle(article) {
     setResult(
       (previous) =>
@@ -79,9 +90,11 @@ export function useArticles({
               : item,
           ),
         },
-    )
+    );
   }
-  const current = result?.key === key
+
+  const current = result?.key === key;
+
   return {
     articles: current ? result.articles : [],
     total: current ? result.total : 0,
@@ -89,5 +102,5 @@ export function useArticles({
     loading: !current,
     refresh,
     updateArticle,
-  }
+  };
 }

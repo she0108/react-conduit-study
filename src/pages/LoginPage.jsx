@@ -1,38 +1,50 @@
-import { useState } from 'react'
-import { Link, Navigate, useLocation, useNavigate } from 'react-router'
-import { login } from '../apis/auth.js'
-import { useAuth } from '../hooks/useAuth.js'
-import { getReturnPath } from '../utils/returnPath.js'
-import ErrorMessages from '../components/ErrorMessages.jsx'
+import { useState } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router";
+
+import { login } from "../apis/auth.js";
+import { useAuth } from "../hooks/useAuth.js";
+import { getReturnPath } from "../utils/returnPath.js";
+import ErrorMessages from "../components/ErrorMessages.jsx";
+
 export default function LoginPage() {
-  const { user, setUser } = useAuth()
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState(null)
-  const [pending, setPending] = useState(false)
-  const from = getReturnPath(location.state?.from)
-  if (user) return <Navigate to={from} replace />
+  const { user, setUser } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [pending, setPending] = useState(false);
+
+  const from = getReturnPath(location.state?.from);
+
+  if (user) return <Navigate to={from} replace />;
+
   async function handleSubmit(event) {
-    event.preventDefault()
-    if (pending) return
+    event.preventDefault();
+
+    if (pending) return;
+
     if (!email.trim() || !password) {
-      setError('이메일과 비밀번호를 입력해 주세요.')
-      return
+      setError("이메일과 비밀번호를 입력해 주세요.");
+      return;
     }
-    setPending(true)
-    setError(null)
+
+    setPending(true);
+    setError(null);
+
     try {
-      const data = await login({ email: email.trim(), password })
-      setUser(data.user)
-      navigate(from, { replace: true })
+      const data = await login({ email: email.trim(), password });
+
+      setUser(data.user);
+      navigate(from, { replace: true });
     } catch (error) {
-      setError(error)
+      setError(error);
     } finally {
-      setPending(false)
+      setPending(false);
     }
   }
+
   return (
     <section className="formPage">
       <h1>로그인</h1>
@@ -65,10 +77,10 @@ export default function LoginPage() {
             />
           </label>
           <button className="primary" type="submit">
-            {pending ? '로그인 중…' : '로그인'}
+            {pending ? "로그인 중…" : "로그인"}
           </button>
         </fieldset>
       </form>
     </section>
-  )
+  );
 }

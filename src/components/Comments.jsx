@@ -1,35 +1,44 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router'
-import { getComments } from '../apis/comments.js'
-import { useAuth } from '../hooks/useAuth.js'
-import CommentForm from './CommentForm.jsx'
-import CommentList from './CommentList.jsx'
-import ErrorMessages from './ErrorMessages.jsx'
-import styles from './Comments.module.css'
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router";
+
+import { getComments } from "../apis/comments.js";
+import { useAuth } from "../hooks/useAuth.js";
+import CommentForm from "./CommentForm.jsx";
+import CommentList from "./CommentList.jsx";
+import ErrorMessages from "./ErrorMessages.jsx";
+
+import styles from "./Comments.module.css";
+
 export default function Comments({ slug }) {
-  const { user, handleAuthError } = useAuth()
-  const location = useLocation()
-  const [comments, setComments] = useState(null)
-  const [error, setError] = useState(null)
-  const [attempt, setAttempt] = useState(0)
+  const { user, handleAuthError } = useAuth();
+  const location = useLocation();
+
+  const [comments, setComments] = useState(null);
+  const [error, setError] = useState(null);
+  const [attempt, setAttempt] = useState(0);
+
   useEffect(() => {
-    const controller = new AbortController()
+    const controller = new AbortController();
+
     getComments(slug, controller.signal)
       .then((data) => {
-        if (!controller.signal.aborted) setComments(data.comments)
+        if (!controller.signal.aborted) setComments(data.comments);
       })
       .catch((error) => {
         if (!controller.signal.aborted) {
-          handleAuthError(error)
-          setError(error)
+          handleAuthError(error);
+          setError(error);
         }
-      })
-    return () => controller.abort()
-  }, [slug, attempt, handleAuthError])
+      });
+
+    return () => controller.abort();
+  }, [slug, attempt, handleAuthError]);
+
   function retry() {
-    setError(null)
-    setAttempt((value) => value + 1)
+    setError(null);
+    setAttempt((value) => value + 1);
   }
+
   return (
     <section className={styles.section} aria-label="댓글">
       <h2>댓글</h2>
@@ -56,7 +65,7 @@ export default function Comments({ slug }) {
                 state={{ from: location.pathname + location.search }}
               >
                 로그인
-              </Link>{' '}
+              </Link>{" "}
               후 댓글을 남겨 보세요.
             </p>
           )}
@@ -72,5 +81,5 @@ export default function Comments({ slug }) {
         </>
       )}
     </section>
-  )
+  );
 }

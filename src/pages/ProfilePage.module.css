@@ -3,10 +3,12 @@
   text-align: center;
   padding: 2rem 0;
 }
+
 .banner h1 {
   font-size: 1.6rem;
   margin: 0.8rem 0;
 }
+
 .banner p {
   color: var(--muted);
   max-width: 650px;
@@ -14,10 +16,12 @@
   white-space: pre-wrap;
   line-height: 1.6;
 }
+
 .actions {
   display: flex;
   justify-content: flex-end;
 }
+
 .content {
   max-width: 900px;
   padding-block: 2rem 4rem;

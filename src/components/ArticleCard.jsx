@@ -1,7 +1,10 @@
-import { Link } from 'react-router'
-import ArticleMeta from './ArticleMeta.jsx'
-import FavoriteButton from './FavoriteButton.jsx'
-import styles from './ArticleCard.module.css'
+import { Link } from "react-router";
+
+import ArticleMeta from "./ArticleMeta.jsx";
+import FavoriteButton from "./FavoriteButton.jsx";
+
+import styles from "./ArticleCard.module.css";
+
 export default function ArticleCard({ article, onArticleChange }) {
   return (
     <article className={styles.card}>
@@ -29,5 +32,5 @@ export default function ArticleCard({ article, onArticleChange }) {
         ))}
       </div>
     </article>
-  )
+  );
 }

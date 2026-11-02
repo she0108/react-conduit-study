@@ -5,22 +5,26 @@
   margin-block: 2rem;
   align-items: center;
 }
+
 .pagination > span {
   display: flex;
   gap: 0.3rem;
   align-items: center;
 }
+
 .pagination a {
   display: inline-block;
   border: 1px solid var(--border);
   padding: 0.5rem 0.8rem;
   border-radius: 3px;
 }
+
 .pagination a[aria-current] {
   background: var(--green);
   color: white;
   border-color: var(--green);
 }
+
 .gap {
   padding-inline: 0.3rem;
   color: var(--muted);

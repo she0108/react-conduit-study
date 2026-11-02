@@ -1,76 +1,94 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 import {
   Link,
   Navigate,
   useLocation,
   useParams,
   useSearchParams,
-} from 'react-router'
-import { getProfile } from '../apis/profiles.js'
-import { useAuth } from '../hooks/useAuth.js'
-import { useArticles } from '../hooks/useArticles.js'
-import { getPage, PAGE_SIZE } from '../utils/pagination.js'
-import Avatar from '../components/Avatar.jsx'
-import FollowButton from '../components/FollowButton.jsx'
-import ArticleList from '../components/ArticleList.jsx'
-import Pagination from '../components/Pagination.jsx'
-import ErrorMessages from '../components/ErrorMessages.jsx'
-import styles from './ProfilePage.module.css'
+} from "react-router";
+
+import { getProfile } from "../apis/profiles.js";
+import { useAuth } from "../hooks/useAuth.js";
+import { useArticles } from "../hooks/useArticles.js";
+import { getPage, PAGE_SIZE } from "../utils/pagination.js";
+import Avatar from "../components/Avatar.jsx";
+import FollowButton from "../components/FollowButton.jsx";
+import ArticleList from "../components/ArticleList.jsx";
+import Pagination from "../components/Pagination.jsx";
+import ErrorMessages from "../components/ErrorMessages.jsx";
+
+import styles from "./ProfilePage.module.css";
+
 export default function ProfilePage({ favorites = false }) {
-  const { username } = useParams()
-  const { user } = useAuth()
+  const { username } = useParams();
+  const { user } = useAuth();
+
   return (
     <Profile
-      key={`${username}:${user?.token || ''}`}
+      key={`${username}:${user?.token || ""}`}
       username={username}
       favorites={favorites}
     />
-  )
+  );
 }
+
 function Profile({ username, favorites }) {
-  const { user, handleAuthError } = useAuth()
-  const [params] = useSearchParams()
-  const location = useLocation()
-  const page = getPage(params.get('page'))
+  const { user, handleAuthError } = useAuth();
+  const [params] = useSearchParams();
+  const location = useLocation();
+
+  const page = getPage(params.get("page"));
+
   const list = useArticles({
-    author: favorites ? '' : username,
-    favorited: favorites ? username : '',
+    author: favorites ? "" : username,
+    favorited: favorites ? username : "",
     page,
-  })
-  const [profile, setProfile] = useState(null)
-  const [error, setError] = useState(null)
-  const [attempt, setAttempt] = useState(0)
+  });
+
+  const [profile, setProfile] = useState(null);
+  const [error, setError] = useState(null);
+  const [attempt, setAttempt] = useState(0);
+
   useEffect(() => {
-    const controller = new AbortController()
+    const controller = new AbortController();
+
     getProfile(username, controller.signal)
       .then((data) => {
-        if (!controller.signal.aborted) setProfile(data.profile)
+        if (!controller.signal.aborted) setProfile(data.profile);
       })
       .catch((error) => {
         if (!controller.signal.aborted) {
-          handleAuthError(error)
-          setError(error)
+          handleAuthError(error);
+          setError(error);
         }
-      })
-    return () => controller.abort()
-  }, [username, attempt, handleAuthError])
-  const maxPage = Math.max(1, Math.ceil(list.total / PAGE_SIZE))
+      });
+
+    return () => controller.abort();
+  }, [username, attempt, handleAuthError]);
+
+  const maxPage = Math.max(1, Math.ceil(list.total / PAGE_SIZE));
+
   if (
-    (params.has('page') && params.get('page') !== String(page)) ||
+    (params.has("page") && params.get("page") !== String(page)) ||
     (!list.loading && !list.error && page > maxPage)
   ) {
-    const next = new URLSearchParams(params)
-    next.set('page', Math.min(page, maxPage))
-    return <Navigate to={`${location.pathname}?${next}`} replace />
+    const next = new URLSearchParams(params);
+
+    next.set("page", Math.min(page, maxPage));
+
+    return <Navigate to={`${location.pathname}?${next}`} replace />;
   }
+
   function handleProfileChange(updated) {
-    setProfile(updated)
-    list.refresh()
+    setProfile(updated);
+    list.refresh();
   }
+
   function handleArticleChange(article) {
-    if (favorites && !article.favorited) list.refresh()
-    else list.updateArticle(article)
+    if (favorites && !article.favorited) list.refresh();
+    else list.updateArticle(article);
   }
+
   if (error)
     return (
       <section className="container page">
@@ -78,28 +96,31 @@ function Profile({ username, favorites }) {
         <ErrorMessages error={error} />
         <button
           onClick={() => {
-            setError(null)
-            setAttempt((value) => value + 1)
+            setError(null);
+            setAttempt((value) => value + 1);
           }}
         >
           다시 시도
         </button>
       </section>
-    )
+    );
+
   if (!profile)
     return (
       <p className="container status" role="status">
         프로필을 불러오고 있습니다…
       </p>
-    )
-  const profileUrl = `/profile/${encodeURIComponent(username)}`
+    );
+
+  const profileUrl = `/profile/${encodeURIComponent(username)}`;
+
   return (
     <>
       <header className={styles.banner}>
         <div className="container">
           <Avatar image={profile.image} size={100} />
           <h1>{profile.username}</h1>
-          <p>{profile.bio || '아직 소개가 없습니다.'}</p>
+          <p>{profile.bio || "아직 소개가 없습니다."}</p>
           <div className={styles.actions}>
             <FollowButton profile={profile} onChange={handleProfileChange} />
             {user?.username === username && (
@@ -117,13 +138,13 @@ function Profile({ username, favorites }) {
         <nav className="tabs" aria-label="프로필 글 선택">
           <Link
             to={`${profileUrl}?page=1`}
-            aria-current={!favorites ? 'page' : undefined}
+            aria-current={!favorites ? "page" : undefined}
           >
             작성한 글
           </Link>
           <Link
             to={`${profileUrl}/favorites?page=1`}
-            aria-current={favorites ? 'page' : undefined}
+            aria-current={favorites ? "page" : undefined}
           >
             좋아요한 글
           </Link>
@@ -138,5 +159,5 @@ function Profile({ username, favorites }) {
         )}
       </section>
     </>
-  )
+  );
 }

@@ -1,57 +1,72 @@
-import { useEffect, useState } from 'react'
-import { Link, Navigate, useSearchParams } from 'react-router'
-import { getTags } from '../apis/tags.js'
-import { useAuth } from '../hooks/useAuth.js'
-import { useArticles } from '../hooks/useArticles.js'
-import { getPage, PAGE_SIZE } from '../utils/pagination.js'
-import ArticleList from '../components/ArticleList.jsx'
-import Pagination from '../components/Pagination.jsx'
-import ErrorMessages from '../components/ErrorMessages.jsx'
-import styles from './HomePage.module.css'
+import { useEffect, useState } from "react";
+import { Link, Navigate, useSearchParams } from "react-router";
+
+import { getTags } from "../apis/tags.js";
+import { useAuth } from "../hooks/useAuth.js";
+import { useArticles } from "../hooks/useArticles.js";
+import { getPage, PAGE_SIZE } from "../utils/pagination.js";
+import ArticleList from "../components/ArticleList.jsx";
+import Pagination from "../components/Pagination.jsx";
+import ErrorMessages from "../components/ErrorMessages.jsx";
+
+import styles from "./HomePage.module.css";
+
 export default function HomePage() {
-  const { user } = useAuth()
-  const [params] = useSearchParams()
-  const tag = params.get('tag') || ''
+  const { user } = useAuth();
+  const [params] = useSearchParams();
+
+  const tag = params.get("tag") || "";
   const feed =
-    !tag && params.get('feed') === 'following' && user ? 'following' : 'global'
-  const page = getPage(params.get('page'))
-  const list = useArticles({ feed, tag, page })
-  const [tags, setTags] = useState(null)
-  const [tagsError, setTagsError] = useState(null)
-  const [attempt, setAttempt] = useState(0)
+    !tag && params.get("feed") === "following" && user ? "following" : "global";
+  const page = getPage(params.get("page"));
+
+  const list = useArticles({ feed, tag, page });
+
+  const [tags, setTags] = useState(null);
+  const [tagsError, setTagsError] = useState(null);
+  const [attempt, setAttempt] = useState(0);
+
   useEffect(() => {
-    const controller = new AbortController()
+    const controller = new AbortController();
+
     getTags(controller.signal)
       .then((data) => {
         if (!controller.signal.aborted) {
-          setTags(data.tags)
-          setTagsError(null)
+          setTags(data.tags);
+          setTagsError(null);
         }
       })
       .catch((error) => {
-        if (!controller.signal.aborted) setTagsError(error)
-      })
-    return () => controller.abort()
-  }, [attempt])
-  const maxPage = Math.max(1, Math.ceil(list.total / PAGE_SIZE))
+        if (!controller.signal.aborted) setTagsError(error);
+      });
+
+    return () => controller.abort();
+  }, [attempt]);
+
+  const maxPage = Math.max(1, Math.ceil(list.total / PAGE_SIZE));
   const canonical = new URLSearchParams(
     tag ? { tag, page: String(page) } : { feed, page: String(page) },
-  )
+  );
+
   if (
-    (params.has('page') && params.get('page') !== String(page)) ||
-    (!tag && params.get('feed') === 'following' && !user) ||
-    (tag && params.has('feed'))
+    (params.has("page") && params.get("page") !== String(page)) ||
+    (!tag && params.get("feed") === "following" && !user) ||
+    (tag && params.has("feed"))
   )
-    return <Navigate to={`/?${canonical}`} replace />
+    return <Navigate to={`/?${canonical}`} replace />;
+
   if (!list.loading && !list.error && page > maxPage) {
-    canonical.set('page', maxPage)
-    return <Navigate to={`/?${canonical}`} replace />
+    canonical.set("page", maxPage);
+
+    return <Navigate to={`/?${canonical}`} replace />;
   }
+
   function retryTags() {
-    setTagsError(null)
-    setTags(null)
-    setAttempt((value) => value + 1)
+    setTagsError(null);
+    setTags(null);
+    setAttempt((value) => value + 1);
   }
+
   return (
     <>
       <section className={styles.banner}>
@@ -64,14 +79,14 @@ export default function HomePage() {
             {user && (
               <Link
                 to="/?feed=following&page=1"
-                aria-current={feed === 'following' && !tag ? 'page' : undefined}
+                aria-current={feed === "following" && !tag ? "page" : undefined}
               >
                 나의 피드
               </Link>
             )}
             <Link
               to="/?feed=global&page=1"
-              aria-current={feed === 'global' && !tag ? 'page' : undefined}
+              aria-current={feed === "global" && !tag ? "page" : undefined}
             >
               전체 피드
             </Link>
@@ -120,5 +135,5 @@ export default function HomePage() {
         </aside>
       </div>
     </>
-  )
+  );
 }

@@ -1,4 +1,5 @@
-import { Link } from 'react-router'
+import { Link } from "react-router";
+
 export default function NotFoundPage() {
   return (
     <section className="container page">
@@ -6,5 +7,5 @@ export default function NotFoundPage() {
       <p>주소를 확인하거나 홈으로 돌아가 주세요.</p>
       <Link to="/">홈으로 이동</Link>
     </section>
-  )
+  );
 }

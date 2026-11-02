@@ -4,27 +4,33 @@
   border-top: 1px solid var(--border);
   padding-top: 1.5rem;
 }
+
 .section h2 {
   font-size: 1.25rem;
 }
+
 .form {
   margin-bottom: 2rem;
 }
+
 .form button {
   justify-self: end;
 }
+
 .comment {
   border: 1px solid var(--border);
   border-radius: 4px;
   margin-bottom: 1rem;
   overflow: hidden;
 }
+
 .comment > p {
   padding: 1rem;
   margin: 0;
   white-space: pre-wrap;
   line-height: 1.65;
 }
+
 .comment footer {
   background: #f7f8f7;
   border-top: 1px solid var(--border);
@@ -36,6 +42,7 @@
   font-size: 0.8rem;
   color: var(--muted);
 }
+
 .comment footer a {
   display: inline-flex;
   align-items: center;
@@ -43,6 +50,7 @@
   overflow-wrap: anywhere;
   min-width: 0;
 }
+
 .comment footer button {
   margin-left: auto;
   font-size: 0.8rem;
