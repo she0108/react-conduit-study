@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import { updateUser } from "../apis/auth.js";
 import { useAuth } from "../hooks/useAuth.js";
 import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
 import { getToken } from "../utils/authStorage.js";
+import { emailRules, notBlank } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
+import FieldError from "../components/common/FieldError.jsx";
 
 function toSettingsForm(user) {
   return {
@@ -20,36 +23,24 @@ export default function SettingsPage() {
   const { user, saveSession, handleAuthError } = useAuth();
   const logoutToHome = useLogoutToHome();
 
-  const [form, setForm] = useState(() => toSettingsForm(user));
-  const [pending, setPending] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty, isSubmitting },
+  } = useForm({ defaultValues: toSettingsForm(user) });
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
 
-  function handleChange(event) {
-    setForm((previous) => ({
-      ...previous,
-      [event.target.name]: event.target.value,
-    }));
-    setSaved(false);
-  }
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-
-    if (!form.username.trim() || !form.email.trim()) {
-      setError("사용자 이름과 이메일을 입력해 주세요.");
-      return;
-    }
-
-    setPending(true);
+  async function onSubmit({ image, username, bio, email, password }) {
     setError(null);
     setSaved(false);
     const payload = {
-      image: form.image.trim(),
-      username: form.username.trim(),
-      bio: form.bio.trim(),
-      email: form.email.trim(),
-      ...(form.password ? { password: form.password } : {}),
+      image: image.trim(),
+      username: username.trim(),
+      bio: bio.trim(),
+      email: email.trim(),
+      ...(password ? { password } : {}),
     };
 
     const token = getToken();
@@ -61,13 +52,11 @@ export default function SettingsPage() {
       if (getToken() !== token) return;
 
       saveSession(updatedUser);
-      setForm(toSettingsForm(updatedUser));
+      reset(toSettingsForm(updatedUser));
       setSaved(true);
     } catch (error) {
       handleAuthError(error);
       setError(error);
-    } finally {
-      setPending(false);
     }
   }
 
@@ -75,70 +64,63 @@ export default function SettingsPage() {
     <section className="formPage">
       <h1>내 설정</h1>
       <ErrorMessages error={error} />
-      {saved && <p role="status">설정을 저장했습니다.</p>}
-      <form onSubmit={handleSubmit}>
-        <fieldset disabled={pending}>
+      {saved && !isDirty && <p role="status">설정을 저장했습니다.</p>}
+      <form noValidate onSubmit={handleSubmit(onSubmit)}>
+        <fieldset disabled={isSubmitting}>
           <label>
             프로필 이미지 URL
             <input
-              name="image"
               type="url"
-              value={form.image}
-              onChange={handleChange}
               placeholder="https://example.com/avatar.png"
+              {...register("image", {
+                pattern: {
+                  value: /^\s*https?:\/\/\S+\s*$/,
+                  message: "http 또는 https로 시작하는 주소를 입력해 주세요.",
+                },
+              })}
             />
           </label>
+          <FieldError error={errors.image} />
           <label>
             사용자 이름
             <input
-              name="username"
               autoComplete="username"
-              required
-              value={form.username}
-              onChange={handleChange}
+              {...register("username", notBlank("이름을 입력해 주세요."))}
             />
           </label>
+          <FieldError error={errors.username} />
           <label>
             소개
-            <textarea
-              name="bio"
-              rows={4}
-              value={form.bio}
-              onChange={handleChange}
-            />
+            <textarea rows={4} {...register("bio")} />
           </label>
           <label>
             이메일
             <input
-              name="email"
               type="email"
               autoComplete="email"
-              required
-              value={form.email}
-              onChange={handleChange}
+              {...register("email", emailRules)}
             />
           </label>
+          <FieldError error={errors.email} />
           <label>
             새 비밀번호
             <input
-              name="password"
               type="password"
               autoComplete="new-password"
-              value={form.password}
-              onChange={handleChange}
               aria-describedby="password-help"
+              {...register("password")}
             />
           </label>
           <small id="password-help" className="muted">
             비워 두면 기존 비밀번호를 유지합니다.
           </small>
           <button className="primary" type="submit">
-            {pending ? "저장 중…" : "설정 저장"}
+            {isSubmitting ? "저장 중…" : "설정 저장"}
           </button>
         </fieldset>
       </form>
       <hr />
-      <button className="danger" disabled={pending} onClick={logoutToHome}>
+      <button className="danger" disabled={isSubmitting} onClick={logoutToHome}>
         로그아웃
       </button>
     </section>
