@@ -4,12 +4,12 @@ import Markdown from "react-markdown";
 
 import { deleteArticle, getArticle } from "../apis/articles.js";
 import { useAuth } from "../hooks/useAuth.js";
-import TagLink from "../components/TagLink.jsx";
-import ArticleMeta from "../components/ArticleMeta.jsx";
-import Comments from "../components/Comments.jsx";
-import FollowButton from "../components/FollowButton.jsx";
-import FavoriteButton from "../components/FavoriteButton.jsx";
-import ErrorMessages from "../components/ErrorMessages.jsx";
+import TagLink from "../components/article/TagLink.jsx";
+import ArticleMeta from "../components/article/ArticleMeta.jsx";
+import Comments from "../components/comment/Comments.jsx";
+import FollowButton from "../components/user/FollowButton.jsx";
+import FavoriteButton from "../components/article/FavoriteButton.jsx";
+import ErrorMessages from "../components/common/ErrorMessages.jsx";
 
 import styles from "./ArticlePage.module.css";
 

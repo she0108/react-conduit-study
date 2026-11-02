@@ -4,7 +4,7 @@ import { updateUser } from "../apis/auth.js";
 import { useAuth } from "../hooks/useAuth.js";
 import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
 import { getToken } from "../utils/authStorage.js";
-import ErrorMessages from "../components/ErrorMessages.jsx";
+import ErrorMessages from "../components/common/ErrorMessages.jsx";
 
 function toSettingsForm(user) {
   return {

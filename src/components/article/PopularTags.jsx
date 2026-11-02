@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { getTags } from "../apis/tags.js";
+import { getTags } from "../../apis/tags.js";
 import TagLink from "./TagLink.jsx";
-import ErrorMessages from "./ErrorMessages.jsx";
+import ErrorMessages from "../common/ErrorMessages.jsx";
 
 import styles from "./PopularTags.module.css";
 

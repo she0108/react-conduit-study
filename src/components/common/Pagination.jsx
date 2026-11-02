@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 
-import { getPageCount } from "../utils/pagination.js";
+import { getPageCount } from "../../utils/pagination.js";
 
 import styles from "./Pagination.module.css";
 

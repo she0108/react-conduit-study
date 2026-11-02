@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 
-import Avatar from "./Avatar.jsx";
-import { formatDate } from "../utils/formatDate.js";
+import Avatar from "../user/Avatar.jsx";
+import { formatDate } from "../../utils/formatDate.js";
 
 import styles from "./ArticleMeta.module.css";
 

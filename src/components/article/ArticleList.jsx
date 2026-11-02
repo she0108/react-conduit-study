@@ -1,5 +1,5 @@
 import ArticleCard from "./ArticleCard.jsx";
-import ErrorMessages from "./ErrorMessages.jsx";
+import ErrorMessages from "../common/ErrorMessages.jsx";
 
 export default function ArticleList({
   articles,

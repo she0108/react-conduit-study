@@ -3,7 +3,7 @@ import { Link, Navigate, useLocation, useNavigate } from "react-router";
 
 import { register } from "../apis/auth.js";
 import { useAuth } from "../hooks/useAuth.js";
-import ErrorMessages from "../components/ErrorMessages.jsx";
+import ErrorMessages from "../components/common/ErrorMessages.jsx";
 
 export default function RegisterPage() {
   const { user, saveSession } = useAuth();

@@ -1,4 +1,4 @@
-import placeholder from "../assets/avatar-placeholder.svg";
+import placeholder from "../../assets/avatar-placeholder.svg";
 
 import styles from "./Avatar.module.css";
 

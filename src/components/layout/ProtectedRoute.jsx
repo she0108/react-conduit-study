@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router";
 
-import { useAuth } from "../hooks/useAuth.js";
+import { useAuth } from "../../hooks/useAuth.js";
 
 export default function ProtectedRoute() {
   const { user } = useAuth();

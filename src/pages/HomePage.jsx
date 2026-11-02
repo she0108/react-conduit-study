@@ -3,9 +3,9 @@ import { Link, useSearchParams } from "react-router";
 import { useAuth } from "../hooks/useAuth.js";
 import { useArticles } from "../hooks/useArticles.js";
 import { getPage } from "../utils/pagination.js";
-import ArticleList from "../components/ArticleList.jsx";
-import Pagination from "../components/Pagination.jsx";
-import PopularTags from "../components/PopularTags.jsx";
+import ArticleList from "../components/article/ArticleList.jsx";
+import Pagination from "../components/common/Pagination.jsx";
+import PopularTags from "../components/article/PopularTags.jsx";
 
 import styles from "./HomePage.module.css";
 

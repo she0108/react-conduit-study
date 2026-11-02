@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router";
 
-import { deleteComment } from "../apis/comments.js";
-import { useAuth } from "../hooks/useAuth.js";
-import Avatar from "./Avatar.jsx";
-import ErrorMessages from "./ErrorMessages.jsx";
-import { formatDate } from "../utils/formatDate.js";
+import { deleteComment } from "../../apis/comments.js";
+import { useAuth } from "../../hooks/useAuth.js";
+import Avatar from "../user/Avatar.jsx";
+import ErrorMessages from "../common/ErrorMessages.jsx";
+import { formatDate } from "../../utils/formatDate.js";
 
 import styles from "./Comments.module.css";
 

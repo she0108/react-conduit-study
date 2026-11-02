@@ -1,7 +1,7 @@
 import { Link, NavLink } from "react-router";
 
-import { useAuth } from "../hooks/useAuth.js";
-import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
+import { useAuth } from "../../hooks/useAuth.js";
+import { useLogoutToHome } from "../../hooks/useLogoutToHome.js";
 
 import styles from "./Header.module.css";
 

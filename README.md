@@ -40,7 +40,7 @@ npm run preview
 - `src/contexts/`, `src/hooks/useAuth.js`: 현재 사용자, 토큰 복원, 로그인·로그아웃, 인증 실패 처리.
 - `src/hooks/useArticles.js`: URL 조건과 인증 변화에 따른 목록 조회, effect cleanup과 오래된 응답 무시.
 - `src/pages/`: URL 해석, 페이지 데이터와 폼 상태.
-- `src/components/`: Layout, 반복 UI, 댓글, 명시적인 props와 callback.
+- `src/components/`: 역할별 폴더로 나눈 컴포넌트. `layout`(공통 틀과 접근 제어), `article`, `comment`, `user`, `common`(도메인과 무관한 UI).
 - `src/utils/`: 토큰 저장, 날짜 표시, 페이지 값 보정.
 - `src/mocks/`: MSW 모의 API의 핸들러와 초기 데이터.
 - `src/styles/global.css`: 공통 기본 요소·변수. 각 화면·컴포넌트 스타일은 인접한 CSS Modules에 둡니다.

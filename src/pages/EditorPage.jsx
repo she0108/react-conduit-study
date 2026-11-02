@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router";
 
 import { createArticle, getArticle, updateArticle } from "../apis/articles.js";
 import { useAuth } from "../hooks/useAuth.js";
-import ErrorMessages from "../components/ErrorMessages.jsx";
+import ErrorMessages from "../components/common/ErrorMessages.jsx";
 
 import styles from "./EditorPage.module.css";
 

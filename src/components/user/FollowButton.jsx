@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
-import { favoriteArticle, unfavoriteArticle } from "../apis/articles.js";
-import { useAuth } from "../hooks/useAuth.js";
-import ErrorMessages from "./ErrorMessages.jsx";
+import { followProfile, unfollowProfile } from "../../apis/profiles.js";
+import { useAuth } from "../../hooks/useAuth.js";
+import ErrorMessages from "../common/ErrorMessages.jsx";
 
-export default function FavoriteButton({ article, onFavoriteChange }) {
+export default function FollowButton({ profile, onChange }) {
   const { user, handleAuthError } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(null);
+
+  if (user?.username === profile.username) return null;
 
   async function handleClick() {
     if (!user) {
@@ -25,11 +27,11 @@ export default function FavoriteButton({ article, onFavoriteChange }) {
     setError(null);
 
     try {
-      const { article: updated } = article.favorited
-        ? await unfavoriteArticle(article.slug)
-        : await favoriteArticle(article.slug);
+      const data = profile.following
+        ? await unfollowProfile(profile.username)
+        : await followProfile(profile.username);
 
-      await onFavoriteChange(updated);
+      onChange(data.profile);
     } catch (error) {
       handleAuthError(error);
       setError(error);
@@ -41,18 +43,13 @@ export default function FavoriteButton({ article, onFavoriteChange }) {
   return (
     <div>
       <button
-        className={article.favorited ? "primary" : ""}
-        aria-pressed={article.favorited}
-        aria-label={`${article.favorited ? "좋아요 취소" : "좋아요"}: ${article.title}`}
+        aria-pressed={profile.following}
+        className={profile.following ? "primary" : ""}
         disabled={pending}
         onClick={handleClick}
       >
-        {pending
-          ? "처리 중…"
-          : article.favorited
-            ? "♥ 좋아요 취소"
-            : "♡ 좋아요"}{" "}
-        <span>{article.favoritesCount}</span>
+        {pending ? "처리 중…" : profile.following ? "팔로우 취소" : "+ 팔로우"}{" "}
+        · {profile.username}
       </button>
       <ErrorMessages error={error} />
     </div>

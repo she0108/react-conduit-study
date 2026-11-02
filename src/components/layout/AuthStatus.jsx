@@ -1,5 +1,5 @@
-import { useAuth } from "../hooks/useAuth.js";
-import ErrorMessages from "./ErrorMessages.jsx";
+import { useAuth } from "../../hooks/useAuth.js";
+import ErrorMessages from "../common/ErrorMessages.jsx";
 
 export default function AuthStatus({ children }) {
   const { loading, error, logout } = useAuth();

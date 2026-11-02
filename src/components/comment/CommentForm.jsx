@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { createComment } from "../apis/comments.js";
-import { useAuth } from "../hooks/useAuth.js";
-import ErrorMessages from "./ErrorMessages.jsx";
+import { createComment } from "../../apis/comments.js";
+import { useAuth } from "../../hooks/useAuth.js";
+import ErrorMessages from "../common/ErrorMessages.jsx";
 
 import styles from "./Comments.module.css";
 

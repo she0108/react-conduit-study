@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
 
-import { getComments } from "../apis/comments.js";
-import { useAuth } from "../hooks/useAuth.js";
+import { getComments } from "../../apis/comments.js";
+import { useAuth } from "../../hooks/useAuth.js";
 import CommentForm from "./CommentForm.jsx";
 import CommentList from "./CommentList.jsx";
-import ErrorMessages from "./ErrorMessages.jsx";
+import ErrorMessages from "../common/ErrorMessages.jsx";
 
 import styles from "./Comments.module.css";
 

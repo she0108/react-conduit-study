@@ -5,11 +5,11 @@ import { getProfile } from "../apis/profiles.js";
 import { useAuth } from "../hooks/useAuth.js";
 import { useArticles } from "../hooks/useArticles.js";
 import { getPage } from "../utils/pagination.js";
-import Avatar from "../components/Avatar.jsx";
-import FollowButton from "../components/FollowButton.jsx";
-import ArticleList from "../components/ArticleList.jsx";
-import Pagination from "../components/Pagination.jsx";
-import ErrorMessages from "../components/ErrorMessages.jsx";
+import Avatar from "../components/user/Avatar.jsx";
+import FollowButton from "../components/user/FollowButton.jsx";
+import ArticleList from "../components/article/ArticleList.jsx";
+import Pagination from "../components/common/Pagination.jsx";
+import ErrorMessages from "../components/common/ErrorMessages.jsx";
 
 import styles from "./ProfilePage.module.css";
 

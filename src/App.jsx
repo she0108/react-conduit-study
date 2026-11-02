@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router";
 
-import Layout from "./components/Layout.jsx";
+import Layout from "./components/layout/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import EditorPage from "./pages/EditorPage.jsx";
 import ArticlePage from "./pages/ArticlePage.jsx";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import ProtectedRoute from "./components/layout/ProtectedRoute.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
