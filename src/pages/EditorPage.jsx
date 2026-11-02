@@ -7,6 +7,17 @@ import ErrorMessages from "../components/common/ErrorMessages.jsx";
 
 import styles from "./EditorPage.module.css";
 
+function parseTags(value) {
+  return [
+    ...new Set(
+      value
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+    ),
+  ];
+}
+
 export default function EditorPage() {
   const { slug } = useParams();
   const { user } = useAuth();
@@ -22,7 +33,7 @@ function Editor({ slug }) {
     title: "",
     description: "",
     body: "",
-    tagList: [],
+    tags: "",
   });
   const [loadState, setLoadState] = useState({
     status: slug ? "loading" : "ready",
@@ -30,7 +41,6 @@ function Editor({ slug }) {
   });
   const [error, setError] = useState(null);
   const [pending, setPending] = useState(false);
-  const [tagInput, setTagInput] = useState("");
 
   useEffect(() => {
     if (!slug) return;
@@ -50,7 +60,7 @@ function Editor({ slug }) {
           title: article.title,
           description: article.description,
           body: article.body,
-          tagList: article.tagList,
+          tags: article.tagList.join(", "),
         });
         setLoadState({ status: "ready", error: null });
       })
@@ -73,25 +83,6 @@ function Editor({ slug }) {
     }));
   }
 
-  function addTag() {
-    const tag = tagInput.trim();
-
-    if (tag)
-      setArticle((previous) => ({
-        ...previous,
-        tagList: [...new Set([...previous.tagList, tag])],
-      }));
-
-    setTagInput("");
-  }
-
-  function handleTagKeyDown(event) {
-    if (event.key === "Enter" && !event.nativeEvent.isComposing) {
-      event.preventDefault();
-      addTag();
-    }
-  }
-
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -105,13 +96,10 @@ function Editor({ slug }) {
     }
 
     const payload = {
-      ...article,
       title: article.title.trim(),
       description: article.description.trim(),
       body: article.body.trim(),
-      tagList: [
-        ...new Set([...article.tagList, tagInput.trim()].filter(Boolean)),
-      ],
+      tagList: parseTags(article.tags),
     };
 
     setPending(true);
@@ -194,41 +182,15 @@ function Editor({ slug }) {
               placeholder="Markdown으로 자유롭게 작성해 보세요."
             />
           </label>
-          <div>
-            <label htmlFor="tag">태그</label>
-            <div className={styles.tagInput}>
-              <input
-                id="tag"
-                value={tagInput}
-                onChange={(event) => setTagInput(event.target.value)}
-                onKeyDown={handleTagKeyDown}
-                placeholder="태그를 입력하고 Enter 또는 추가"
-              />
-              <button type="button" onClick={addTag}>
-                추가
-              </button>
-            </div>
-            <div className={styles.tags}>
-              {article.tagList.map((tag) => (
-                <button
-                  className="tag"
-                  type="button"
-                  key={tag}
-                  aria-label={`${tag} 태그 삭제`}
-                  onClick={() =>
-                    setArticle((previous) => ({
-                      ...previous,
-                      tagList: previous.tagList.filter(
-                        (value) => value !== tag,
-                      ),
-                    }))
-                  }
-                >
-                  {tag} ×
-                </button>
-              ))}
-            </div>
-          </div>
+          <label>
+            태그
+            <input
+              name="tags"
+              value={article.tags}
+              onChange={handleChange}
+              placeholder="쉼표로 구분해 입력해 주세요. 예: react, css"
+            />
+          </label>
           <button type="submit" className="primary">
             {pending ? "저장 중…" : slug ? "수정 완료" : "게시하기"}
           </button>

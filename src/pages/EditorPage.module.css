@@ -5,20 +5,3 @@
 .editor h1 {
   margin-bottom: 2rem;
 }
-
-.tagInput {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
-}
-
-.tagInput button {
-  white-space: nowrap;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.7rem;
-}
