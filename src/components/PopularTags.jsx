@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
 
 import { getTags } from "../apis/tags.js";
+import TagLink from "./TagLink.jsx";
 import ErrorMessages from "./ErrorMessages.jsx";
 
 import styles from "./PopularTags.module.css";
@@ -47,13 +47,7 @@ export default function PopularTags({ className = "" }) {
       ) : tags.length ? (
         <div className={styles.tags}>
           {tags.map((value) => (
-            <Link
-              className="tag"
-              key={value}
-              to={`/?tag=${encodeURIComponent(value)}&page=1`}
-            >
-              {value}
-            </Link>
+            <TagLink key={value} tag={value} />
           ))}
         </div>
       ) : (

@@ -4,6 +4,7 @@ import Markdown from "react-markdown";
 
 import { deleteArticle, getArticle } from "../apis/articles.js";
 import { useAuth } from "../hooks/useAuth.js";
+import TagLink from "../components/TagLink.jsx";
 import ArticleMeta from "../components/ArticleMeta.jsx";
 import Comments from "../components/Comments.jsx";
 import FollowButton from "../components/FollowButton.jsx";
@@ -143,13 +144,7 @@ function ArticleContent({ slug }) {
         </div>
         <div className={styles.tags}>
           {article.tagList.map((tag) => (
-            <Link
-              key={tag}
-              className="tag"
-              to={`/?tag=${encodeURIComponent(tag)}&page=1`}
-            >
-              {tag}
-            </Link>
+            <TagLink key={tag} tag={tag} />
           ))}
         </div>
         <Comments slug={slug} />

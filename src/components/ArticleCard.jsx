@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 
+import TagLink from "./TagLink.jsx";
 import ArticleMeta from "./ArticleMeta.jsx";
 import FavoriteButton from "./FavoriteButton.jsx";
 
@@ -22,13 +23,7 @@ export default function ArticleCard({ article, onFavoriteChange }) {
       </Link>
       <div className={styles.tags}>
         {article.tagList.map((tag) => (
-          <Link
-            className="tag"
-            key={tag}
-            to={`/?tag=${encodeURIComponent(tag)}&page=1`}
-          >
-            {tag}
-          </Link>
+          <TagLink key={tag} tag={tag} />
         ))}
       </div>
     </article>
