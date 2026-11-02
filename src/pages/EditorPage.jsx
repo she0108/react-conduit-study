@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router";
 
 import { createArticle, getArticle, updateArticle } from "../apis/articles.js";
 import { useAuthStore } from "../stores/authStore.js";
+import { useCurrentUser } from "../hooks/useCurrentUser.js";
 import { notBlank } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
 import FieldError from "../components/common/FieldError.jsx";
@@ -23,7 +24,7 @@ function parseTags(value) {
 
 export default function EditorPage() {
   const { slug } = useParams();
-  const user = useAuthStore((state) => state.user);
+  const { user } = useCurrentUser();
 
   return <Editor key={`${slug || "new"}:${user.username}`} slug={slug} />;
 }
@@ -31,7 +32,7 @@ export default function EditorPage() {
 const EMPTY_ARTICLE = { title: "", description: "", body: "", tagList: [] };
 
 function Editor({ slug }) {
-  const user = useAuthStore((state) => state.user);
+  const { user } = useCurrentUser();
   const handleAuthError = useAuthStore((state) => state.handleAuthError);
 
   const [article, setArticle] = useState(EMPTY_ARTICLE);

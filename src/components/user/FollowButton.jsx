@@ -3,10 +3,11 @@ import { useNavigate } from "react-router";
 
 import { followProfile, unfollowProfile } from "../../apis/profiles.js";
 import { useAuthStore } from "../../stores/authStore.js";
+import { useCurrentUser } from "../../hooks/useCurrentUser.js";
 import ErrorMessages from "../common/ErrorMessages.jsx";
 
 export default function FollowButton({ profile, onChange }) {
-  const user = useAuthStore((state) => state.user);
+  const { user } = useCurrentUser();
   const handleAuthError = useAuthStore((state) => state.handleAuthError);
   const navigate = useNavigate();
 

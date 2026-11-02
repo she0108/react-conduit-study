@@ -1,45 +1,38 @@
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { Link, Navigate, useLocation, useNavigate } from "react-router";
+import { Link, Navigate, useLocation } from "react-router";
 
 import { register as registerUser } from "../apis/auth.js";
-import { useAuthStore } from "../stores/authStore.js";
+import { saveSession } from "../queryClient.js";
+import { useCurrentUser } from "../hooks/useCurrentUser.js";
 import { emailRules, notBlank } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
 import FieldError from "../components/common/FieldError.jsx";
 
 export default function RegisterPage() {
-  const user = useAuthStore((state) => state.user);
-  const saveSession = useAuthStore((state) => state.saveSession);
+  const { user } = useCurrentUser();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
-  const [error, setError] = useState(null);
+  const mutation = useMutation({
+    mutationFn: registerUser,
+    onSuccess: (data) => saveSession(data.user),
+  });
 
   const from = location.state?.from || "/";
 
   if (user) return <Navigate to={from} replace />;
 
-  async function onSubmit({ username, email, password }) {
-    setError(null);
-
-    try {
-      const data = await registerUser({
-        username: username.trim(),
-        email: email.trim(),
-        password,
-      });
-
-      saveSession(data.user);
-      navigate(from, { replace: true });
-    } catch (error) {
-      setError(error);
-    }
+  function onSubmit({ username, email, password }) {
+    mutation.mutate({
+      username: username.trim(),
+      email: email.trim(),
+      password,
+    });
   }
 
   return (
@@ -50,9 +43,9 @@ export default function RegisterPage() {
           이미 계정이 있으신가요?
         </Link>
       </p>
-      <ErrorMessages error={error} />
+      <ErrorMessages error={mutation.error} />
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
-        <fieldset disabled={isSubmitting}>
+        <fieldset disabled={mutation.isPending}>
           <label>
             사용자 이름
             <input
@@ -82,7 +75,7 @@ export default function RegisterPage() {
           </label>
           <FieldError error={errors.password} />
           <button className="primary" type="submit">
-            {isSubmitting ? "가입 중…" : "회원가입"}
+            {mutation.isPending ? "가입 중…" : "회원가입"}
           </button>
         </fieldset>
       </form>

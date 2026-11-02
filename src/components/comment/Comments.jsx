@@ -3,6 +3,7 @@ import { Link } from "react-router";
 
 import { getComments } from "../../apis/comments.js";
 import { useAuthStore } from "../../stores/authStore.js";
+import { useCurrentUser } from "../../hooks/useCurrentUser.js";
 import CommentForm from "./CommentForm.jsx";
 import CommentList from "./CommentList.jsx";
 import ErrorMessages from "../common/ErrorMessages.jsx";
@@ -10,7 +11,7 @@ import ErrorMessages from "../common/ErrorMessages.jsx";
 import styles from "./Comments.module.css";
 
 export default function Comments({ slug }) {
-  const user = useAuthStore((state) => state.user);
+  const { user } = useCurrentUser();
   const handleAuthError = useAuthStore((state) => state.handleAuthError);
 
   const [comments, setComments] = useState(null);

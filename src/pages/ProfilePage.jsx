@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from "react-router";
 
 import { getProfile } from "../apis/profiles.js";
 import { useAuthStore } from "../stores/authStore.js";
+import { useCurrentUser } from "../hooks/useCurrentUser.js";
 import { useArticles } from "../hooks/useArticles.js";
 import { getPage } from "../utils/pagination.js";
 import Avatar from "../components/user/Avatar.jsx";
@@ -15,7 +16,7 @@ import styles from "./ProfilePage.module.css";
 
 export default function ProfilePage({ favorites = false }) {
   const { username } = useParams();
-  const user = useAuthStore((state) => state.user);
+  const { user } = useCurrentUser();
 
   return (
     <Profile
@@ -27,7 +28,7 @@ export default function ProfilePage({ favorites = false }) {
 }
 
 function Profile({ username, favorites }) {
-  const user = useAuthStore((state) => state.user);
+  const { user } = useCurrentUser();
   const handleAuthError = useAuthStore((state) => state.handleAuthError);
   const [params] = useSearchParams();
 

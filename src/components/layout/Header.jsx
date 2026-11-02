@@ -1,12 +1,12 @@
 import { Link, NavLink } from "react-router";
 
-import { useAuthStore } from "../../stores/authStore.js";
+import { useCurrentUser } from "../../hooks/useCurrentUser.js";
 import { useLogoutToHome } from "../../hooks/useLogoutToHome.js";
 
 import styles from "./Header.module.css";
 
 export default function Header() {
-  const user = useAuthStore((state) => state.user);
+  const { user } = useCurrentUser();
   const logoutToHome = useLogoutToHome();
 
   return (

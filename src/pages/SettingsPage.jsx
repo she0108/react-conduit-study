@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import { updateUser } from "../apis/auth.js";
+import { queryClient, saveSession } from "../queryClient.js";
 import { useAuthStore } from "../stores/authStore.js";
+import { useCurrentUser } from "../hooks/useCurrentUser.js";
 import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
 import { emailRules, notBlank } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
@@ -19,55 +21,48 @@ function toSettingsForm(user) {
 }
 
 export default function SettingsPage() {
-  const user = useAuthStore((state) => state.user);
-  const saveSession = useAuthStore((state) => state.saveSession);
-  const handleAuthError = useAuthStore((state) => state.handleAuthError);
+  const { user } = useCurrentUser();
   const logoutToHome = useLogoutToHome();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty },
   } = useForm({ defaultValues: toSettingsForm(user) });
-  const [error, setError] = useState(null);
-  const [saved, setSaved] = useState(false);
-
-  async function onSubmit({ image, username, bio, email, password }) {
-    setError(null);
-    setSaved(false);
-    const payload = {
-      image: image.trim(),
-      username: username.trim(),
-      bio: bio.trim(),
-      email: email.trim(),
-      ...(password ? { password } : {}),
-    };
-
-    const token = useAuthStore.getState().token;
-
-    try {
-      const { user: updatedUser } = await updateUser(payload);
-
+  const mutation = useMutation({
+    mutationFn: updateUser,
+    onMutate: () => ({ token: useAuthStore.getState().token }),
+    onSuccess: ({ user: updatedUser }, _variables, { token }) => {
       // 저장 중 로그아웃했거나 계정이 바뀌었다면 늦은 응답으로 세션을 되살리지 않는다.
       if (useAuthStore.getState().token !== token) return;
 
       saveSession(updatedUser);
       reset(toSettingsForm(updatedUser));
-      setSaved(true);
-    } catch (error) {
-      handleAuthError(error);
-      setError(error);
-    }
+      // 이름과 이미지는 글·댓글·프로필 응답에도 들어 있으므로 모두 다시 조회한다.
+      queryClient.invalidateQueries();
+    },
+  });
+
+  function onSubmit({ image, username, bio, email, password }) {
+    mutation.mutate({
+      image: image.trim(),
+      username: username.trim(),
+      bio: bio.trim(),
+      email: email.trim(),
+      ...(password ? { password } : {}),
+    });
   }
 
   return (
     <section className="formPage">
       <h1>내 설정</h1>
-      <ErrorMessages error={error} />
-      {saved && !isDirty && <p role="status">설정을 저장했습니다.</p>}
+      <ErrorMessages error={mutation.error} />
+      {mutation.isSuccess && !isDirty && (
+        <p role="status">설정을 저장했습니다.</p>
+      )}
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
-        <fieldset disabled={isSubmitting}>
+        <fieldset disabled={mutation.isPending}>
           <label>
             프로필 이미지 URL
             <input
@@ -116,12 +111,16 @@ export default function SettingsPage() {
             비워 두면 기존 비밀번호를 유지합니다.
           </small>
           <button className="primary" type="submit">
-            {isSubmitting ? "저장 중…" : "설정 저장"}
+            {mutation.isPending ? "저장 중…" : "설정 저장"}
           </button>
         </fieldset>
       </form>
       <hr />
-      <button className="danger" disabled={isSubmitting} onClick={logoutToHome}>
+      <button
+        className="danger"
+        disabled={mutation.isPending}
+        onClick={logoutToHome}
+      >
         로그아웃
       </button>
     </section>
