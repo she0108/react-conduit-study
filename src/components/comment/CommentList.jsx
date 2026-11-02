@@ -3,7 +3,6 @@ import { Link } from "react-router";
 
 import { deleteComment } from "../../apis/comments.js";
 import { queryClient } from "../../queryClient.js";
-import { useAuthStore } from "../../stores/authStore.js";
 import { useCurrentUser } from "../../hooks/useCurrentUser.js";
 import Avatar from "../user/Avatar.jsx";
 import ErrorMessages from "../common/ErrorMessages.jsx";
@@ -27,15 +26,11 @@ export default function CommentList({ slug, comments }) {
 
 function Comment({ slug, comment }) {
   const { user } = useCurrentUser();
-  const token = useAuthStore((state) => state.token);
 
   const mutation = useMutation({
     mutationFn: () => deleteComment(slug, comment.id),
-    onSuccess: () => {
-      queryClient.setQueryData(["comments", slug, token], (previous) => ({
-        comments: previous.comments.filter((item) => item.id !== comment.id),
-      }));
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["comments", slug] }),
   });
 
   function handleDelete() {

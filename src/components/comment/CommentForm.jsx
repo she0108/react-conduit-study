@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 
 import { createComment } from "../../apis/comments.js";
 import { queryClient } from "../../queryClient.js";
-import { useAuthStore } from "../../stores/authStore.js";
 import { notBlank } from "../../utils/formRules.js";
 import ErrorMessages from "../common/ErrorMessages.jsx";
 import FieldError from "../common/FieldError.jsx";
@@ -11,8 +10,6 @@ import FieldError from "../common/FieldError.jsx";
 import styles from "./Comments.module.css";
 
 export default function CommentForm({ slug }) {
-  const token = useAuthStore((state) => state.token);
-
   const {
     register,
     handleSubmit,
@@ -21,10 +18,8 @@ export default function CommentForm({ slug }) {
   } = useForm();
   const mutation = useMutation({
     mutationFn: (body) => createComment(slug, body),
-    onSuccess: ({ comment }) => {
-      queryClient.setQueryData(["comments", slug, token], (previous) => ({
-        comments: [...previous.comments, comment],
-      }));
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["comments", slug] });
       reset();
     },
   });

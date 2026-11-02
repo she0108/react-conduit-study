@@ -4,12 +4,10 @@ import { useNavigate } from "react-router";
 import { favoriteArticle, unfavoriteArticle } from "../../apis/articles.js";
 import { useCurrentUser } from "../../hooks/useCurrentUser.js";
 import { queryClient } from "../../queryClient.js";
-import { useAuthStore } from "../../stores/authStore.js";
 import ErrorMessages from "../common/ErrorMessages.jsx";
 
 export default function FavoriteButton({ article }) {
   const { user } = useCurrentUser();
-  const token = useAuthStore((state) => state.token);
   const navigate = useNavigate();
 
   const mutation = useMutation({
@@ -17,12 +15,12 @@ export default function FavoriteButton({ article }) {
       article.favorited
         ? unfavoriteArticle(article.slug)
         : favoriteArticle(article.slug),
-    onSuccess: (data) => {
-      queryClient.setQueryData(["article", article.slug, token], data);
-
-      // 목록을 다시 받을 때까지 버튼의 처리 중 상태를 유지한다.
-      return queryClient.invalidateQueries({ queryKey: ["articles"] });
-    },
+    // Promise를 돌려주면 다시 받을 때까지 버튼의 처리 중 상태가 유지된다.
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["article", article.slug] }),
+        queryClient.invalidateQueries({ queryKey: ["articles"] }),
+      ]),
   });
 
   function handleClick() {

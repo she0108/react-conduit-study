@@ -4,12 +4,10 @@ import { useNavigate } from "react-router";
 import { followProfile, unfollowProfile } from "../../apis/profiles.js";
 import { useCurrentUser } from "../../hooks/useCurrentUser.js";
 import { queryClient } from "../../queryClient.js";
-import { useAuthStore } from "../../stores/authStore.js";
 import ErrorMessages from "../common/ErrorMessages.jsx";
 
 export default function FollowButton({ profile }) {
   const { user } = useCurrentUser();
-  const token = useAuthStore((state) => state.token);
   const navigate = useNavigate();
 
   const mutation = useMutation({
@@ -17,15 +15,15 @@ export default function FollowButton({ profile }) {
       profile.following
         ? unfollowProfile(profile.username)
         : followProfile(profile.username),
-    onSuccess: (data) => {
-      queryClient.setQueryData(["profile", profile.username, token], data);
-
-      // 글 상세의 작성자 정보와 개인 피드를 다시 받는다.
-      return Promise.all([
+    // 프로필과 글 상세의 작성자 정보, 개인 피드를 다시 받는다.
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["profile", profile.username],
+        }),
         queryClient.invalidateQueries({ queryKey: ["article"] }),
         queryClient.invalidateQueries({ queryKey: ["articles"] }),
-      ]);
-    },
+      ]),
   });
 
   if (user?.username === profile.username) return null;

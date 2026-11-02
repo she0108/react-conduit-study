@@ -73,7 +73,6 @@ function EditArticle({ slug }) {
 
 // 글을 다 불러온 뒤에 마운트해 불러온 값을 폼의 초기값으로 쓴다.
 function EditorForm({ slug, article }) {
-  const token = useAuthStore((state) => state.token);
   const navigate = useNavigate();
 
   const {
@@ -92,7 +91,6 @@ function EditorForm({ slug, article }) {
     mutationFn: (payload) =>
       slug ? updateArticle(slug, payload) : createArticle(payload),
     onSuccess: (data) => {
-      queryClient.setQueryData(["article", data.article.slug, token], data);
       navigate(`/article/${encodeURIComponent(data.article.slug)}`, {
         replace: true,
       });
