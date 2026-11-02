@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 export const useAuthStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       token: null,
 
       setToken(token) {
@@ -12,10 +12,6 @@ export const useAuthStore = create(
 
       logout() {
         set({ token: null });
-      },
-
-      handleAuthError(error) {
-        if (error.status === 401) get().logout();
       },
     }),
     {
