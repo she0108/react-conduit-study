@@ -22,7 +22,6 @@ export default function Header() {
           {user ? (
             <>
               <NavLink to="/editor">새 글 쓰기</NavLink>
-              <NavLink to="/settings">설정</NavLink>
               <NavLink
                 to={`/profile/${encodeURIComponent(user.username)}`}
                 className={styles.profile}
