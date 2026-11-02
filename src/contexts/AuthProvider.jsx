@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { getCurrentUser } from "../apis/auth.js";
 import { getToken, removeToken, saveToken } from "../utils/authStorage.js";
@@ -12,14 +12,11 @@ export default function AuthProvider({ children }) {
   }));
   const [reloadCount, setReloadCount] = useState(0);
 
-  const restoreController = useRef(null);
-
   useEffect(() => {
     if (!getToken()) return;
 
     const controller = new AbortController();
 
-    restoreController.current = controller;
     getCurrentUser(controller.signal)
       .then(({ user }) => {
         if (!controller.signal.aborted)
@@ -38,7 +35,6 @@ export default function AuthProvider({ children }) {
   }, [reloadCount]);
 
   const startSession = useCallback((user) => {
-    restoreController.current?.abort();
     saveToken(user.token);
     setAuth({ user, status: "authenticated", error: null });
   }, []);
@@ -55,7 +51,6 @@ export default function AuthProvider({ children }) {
   );
 
   const logout = useCallback(() => {
-    restoreController.current?.abort();
     removeToken();
     setAuth({ user: null, status: "anonymous", error: null });
   }, []);
