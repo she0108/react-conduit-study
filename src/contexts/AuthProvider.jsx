@@ -37,15 +37,21 @@ export default function AuthProvider({ children }) {
     return () => controller.abort();
   }, [attempt]);
 
-  const setUser = useCallback((user, expectedToken) => {
-    if (expectedToken && expectedToken !== getToken()) return false;
-
+  const startSession = useCallback((user) => {
     restoreController.current?.abort();
     saveToken(user.token);
     setAuth({ user, status: "authenticated", error: null });
-
-    return true;
   }, []);
+
+  const updateCurrentUser = useCallback(
+    (user, expectedToken) => {
+      if (!expectedToken || expectedToken !== getToken()) return false;
+
+      startSession(user);
+      return true;
+    },
+    [startSession],
+  );
 
   const logout = useCallback(() => {
     restoreController.current?.abort();
@@ -68,7 +74,14 @@ export default function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ ...auth, setUser, logout, retry, handleAuthError }}
+      value={{
+        ...auth,
+        startSession,
+        updateCurrentUser,
+        logout,
+        retry,
+        handleAuthError,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -6,7 +6,7 @@ import { useAuth } from "../hooks/useAuth.js";
 import ErrorMessages from "../components/ErrorMessages.jsx";
 
 export default function SettingsPage() {
-  const { user, setUser, logout, handleAuthError } = useAuth();
+  const { user, updateCurrentUser, logout, handleAuthError } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -52,7 +52,7 @@ export default function SettingsPage() {
     try {
       const { user: updatedUser } = await updateUser(payload);
 
-      if (!setUser(updatedUser, user.token)) return;
+      if (!updateCurrentUser(updatedUser, user.token)) return;
 
       setForm({
         image: updatedUser.image || "",

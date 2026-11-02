@@ -7,7 +7,7 @@ import { getReturnPath } from "../utils/returnPath.js";
 import ErrorMessages from "../components/ErrorMessages.jsx";
 
 export default function LoginPage() {
-  const { user, setUser } = useAuth();
+  const { user, startSession } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ export default function LoginPage() {
     try {
       const data = await login({ email: email.trim(), password });
 
-      setUser(data.user);
+      startSession(data.user);
       navigate(from, { replace: true });
     } catch (error) {
       setError(error);
