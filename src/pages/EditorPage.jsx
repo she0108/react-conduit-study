@@ -24,9 +24,10 @@ function Editor({ slug }) {
     body: "",
     tagList: [],
   });
-  const [loaded, setLoaded] = useState(!slug);
-  const [loadError, setLoadError] = useState(null);
-  const [forbidden, setForbidden] = useState(false);
+  const [loadState, setLoadState] = useState({
+    status: slug ? "loading" : "ready",
+    error: null,
+  });
   const [error, setError] = useState(null);
   const [pending, setPending] = useState(false);
   const [tagInput, setTagInput] = useState("");
@@ -42,7 +43,7 @@ function Editor({ slug }) {
         if (controller.signal.aborted) return;
 
         if (article.author.username !== user.username) {
-          setForbidden(true);
+          setLoadState({ status: "forbidden", error: null });
           return;
         }
 
@@ -52,12 +53,12 @@ function Editor({ slug }) {
           body: article.body,
           tagList: article.tagList,
         });
-        setLoaded(true);
+        setLoadState({ status: "ready", error: null });
       })
       .catch((error) => {
         if (!controller.signal.aborted) {
           handleAuthError(error);
-          setLoadError(error);
+          setLoadState({ status: "error", error });
         }
       });
 
@@ -93,7 +94,7 @@ function Editor({ slug }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (pending || !loaded) return;
+    if (pending || loadState.status !== "ready") return;
 
     if (
       ![article.title, article.description, article.body].every((value) =>
@@ -133,7 +134,7 @@ function Editor({ slug }) {
     }
   }
 
-  if (forbidden)
+  if (loadState.status === "forbidden")
     return (
       <section className="container page">
         <h1>이 글을 수정할 수 없습니다</h1>
@@ -142,14 +143,14 @@ function Editor({ slug }) {
       </section>
     );
 
-  if (loadError)
+  if (loadState.status === "error")
     return (
       <section className="container page">
         <h1>수정할 글을 불러오지 못했습니다</h1>
-        <ErrorMessages error={loadError} />
+        <ErrorMessages error={loadState.error} />
         <button
           onClick={() => {
-            setLoadError(null);
+            setLoadState({ status: "loading", error: null });
             setAttempt((value) => value + 1);
           }}
         >
@@ -158,7 +159,7 @@ function Editor({ slug }) {
       </section>
     );
 
-  if (!loaded)
+  if (loadState.status === "loading")
     return (
       <p className="container status" role="status">
         수정할 글을 불러오고 있습니다…
