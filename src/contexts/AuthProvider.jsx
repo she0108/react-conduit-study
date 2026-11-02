@@ -45,6 +45,7 @@ export default function AuthProvider({ children }) {
 
   const updateCurrentUser = useCallback(
     (user, expectedToken) => {
+      // 저장 요청 도중 로그아웃하거나 계정이 바뀌면 이전 응답으로 세션을 복원하지 않는다.
       if (!expectedToken || expectedToken !== getToken()) return false;
 
       startSession(user);
@@ -61,6 +62,7 @@ export default function AuthProvider({ children }) {
 
   const handleAuthError = useCallback(
     (error) => {
+      // 이전 세션의 늦은 401 응답이 새 세션을 로그아웃시키지 않도록 요청 당시 토큰을 비교한다.
       if (error.status === 401 && error.token && error.token === getToken())
         logout();
     },

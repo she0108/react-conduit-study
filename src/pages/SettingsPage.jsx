@@ -52,6 +52,7 @@ export default function SettingsPage() {
     try {
       const { user: updatedUser } = await updateUser(payload);
 
+      // 요청을 시작한 세션이 유지될 때만 사용자 정보와 저장 완료 표시를 갱신한다.
       if (!updateCurrentUser(updatedUser, user.token)) return;
 
       setForm({
@@ -71,6 +72,7 @@ export default function SettingsPage() {
   }
 
   function handleLogout() {
+    // 인증 해제와 홈 이동을 함께 반영해 보호 경로의 로그인 이동과 충돌하지 않게 한다.
     startTransition(() => {
       logout();
       navigate("/", { replace: true });

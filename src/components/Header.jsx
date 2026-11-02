@@ -10,6 +10,7 @@ export default function Header() {
   const navigate = useNavigate();
 
   function handleLogout() {
+    // 인증 해제와 홈 이동을 함께 반영해 보호 경로가 먼저 로그인 화면으로 이동시키지 않게 한다.
     startTransition(() => {
       logout();
       navigate("/", { replace: true });

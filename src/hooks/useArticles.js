@@ -18,6 +18,7 @@ export function useArticles({
   const [revision, setRevision] = useState(0);
   const [result, setResult] = useState(null);
 
+  // 조건이 바뀐 첫 렌더부터 이전 결과를 숨기고, 현재 조건의 응답이 도착할 때까지 로딩으로 표시한다.
   const key = JSON.stringify([
     feed,
     tag,

@@ -16,6 +16,7 @@ export default function ArticlePage() {
   const { slug } = useParams();
   const { user } = useAuth();
 
+  // 글이나 세션이 바뀌면 상세·댓글 상태를 함께 초기화한다.
   return <ArticleContent key={`${slug}:${user?.token || ""}`} slug={slug} />;
 }
 
