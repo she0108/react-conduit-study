@@ -12,7 +12,7 @@ import { worker } from "./mocks/browser.js";
 worker.start({ onUnhandledRequest: "bypass" }).then(() => {
   createRoot(document.getElementById("root")).render(
     <StrictMode>
-      <BrowserRouter>
+      <BrowserRouter useTransitions={false}>
         <AuthProvider>
           <App />
         </AuthProvider>
