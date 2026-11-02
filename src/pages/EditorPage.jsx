@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router";
 
 import { createArticle, getArticle, updateArticle } from "../apis/articles.js";
 import { useAuth } from "../hooks/useAuth.js";
+import { notBlank } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
+import FieldError from "../components/common/FieldError.jsx";
 
 import styles from "./EditorPage.module.css";
 
@@ -25,22 +28,16 @@ export default function EditorPage() {
   return <Editor key={`${slug || "new"}:${user.username}`} slug={slug} />;
 }
 
+const EMPTY_ARTICLE = { title: "", description: "", body: "", tagList: [] };
+
 function Editor({ slug }) {
   const { user, handleAuthError } = useAuth();
-  const navigate = useNavigate();
 
-  const [article, setArticle] = useState({
-    title: "",
-    description: "",
-    body: "",
-    tags: "",
-  });
+  const [article, setArticle] = useState(EMPTY_ARTICLE);
   const [loadState, setLoadState] = useState({
     status: slug ? "loading" : "ready",
     error: null,
   });
-  const [error, setError] = useState(null);
-  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -56,12 +53,7 @@ function Editor({ slug }) {
           return;
         }
 
-        setArticle({
-          title: article.title,
-          description: article.description,
-          body: article.body,
-          tags: article.tagList.join(", "),
-        });
+        setArticle(article);
         setLoadState({ status: "ready", error: null });
       })
       .catch((error) => {
@@ -75,51 +67,6 @@ function Editor({ slug }) {
       ignore = true;
     };
   }, [slug, user.username, handleAuthError]);
-
-  function handleChange(event) {
-    setArticle((previous) => ({
-      ...previous,
-      [event.target.name]: event.target.value,
-    }));
-  }
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-
-    if (
-      ![article.title, article.description, article.body].every((value) =>
-        value.trim(),
-      )
-    ) {
-      setError("제목, 설명, 본문은 공백만 입력할 수 없습니다.");
-      return;
-    }
-
-    const payload = {
-      title: article.title.trim(),
-      description: article.description.trim(),
-      body: article.body.trim(),
-      tagList: parseTags(article.tags),
-    };
-
-    setPending(true);
-    setError(null);
-
-    try {
-      const data = slug
-        ? await updateArticle(slug, payload)
-        : await createArticle(payload);
-
-      navigate(`/article/${encodeURIComponent(data.article.slug)}`, {
-        replace: true,
-      });
-    } catch (error) {
-      handleAuthError(error);
-      setError(error);
-    } finally {
-      setPending(false);
-    }
-  }
 
   if (loadState.status === "forbidden")
     return (
@@ -145,54 +92,92 @@ function Editor({ slug }) {
       </p>
     );
 
+  return <EditorForm slug={slug} article={article} />;
+}
+
+// 글을 다 불러온 뒤에 마운트해 불러온 값을 폼의 초기값으로 쓴다.
+function EditorForm({ slug, article }) {
+  const { handleAuthError } = useAuth();
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    defaultValues: {
+      title: article.title,
+      description: article.description,
+      body: article.body,
+      tags: article.tagList.join(", "),
+    },
+  });
+  const [error, setError] = useState(null);
+
+  async function onSubmit({ title, description, body, tags }) {
+    const payload = {
+      title: title.trim(),
+      description: description.trim(),
+      body: body.trim(),
+      tagList: parseTags(tags),
+    };
+
+    setError(null);
+
+    try {
+      const data = slug
+        ? await updateArticle(slug, payload)
+        : await createArticle(payload);
+
+      navigate(`/article/${encodeURIComponent(data.article.slug)}`, {
+        replace: true,
+      });
+    } catch (error) {
+      handleAuthError(error);
+      setError(error);
+    }
+  }
+
   return (
     <section className={`formPage ${styles.editor}`}>
       <h1>{slug ? "글 수정" : "새 글 쓰기"}</h1>
       <ErrorMessages error={error} />
-      <form onSubmit={handleSubmit}>
-        <fieldset disabled={pending}>
+      <form noValidate onSubmit={handleSubmit(onSubmit)}>
+        <fieldset disabled={isSubmitting}>
           <label>
             제목
             <input
-              name="title"
-              required
-              value={article.title}
-              onChange={handleChange}
               placeholder="어떤 이야기를 나누고 싶으신가요?"
+              {...register("title", notBlank("제목을 입력해 주세요."))}
             />
           </label>
+          <FieldError error={errors.title} />
           <label>
             설명
             <input
-              name="description"
-              required
-              value={article.description}
-              onChange={handleChange}
               placeholder="글을 한 문장으로 소개해 주세요."
+              {...register("description", notBlank("설명을 입력해 주세요."))}
             />
           </label>
+          <FieldError error={errors.description} />
           <label>
             본문
             <textarea
-              name="body"
               rows={14}
-              required
-              value={article.body}
-              onChange={handleChange}
               placeholder="Markdown으로 자유롭게 작성해 보세요."
+              {...register("body", notBlank("본문을 입력해 주세요."))}
             />
           </label>
+          <FieldError error={errors.body} />
           <label>
             태그
             <input
-              name="tags"
-              value={article.tags}
-              onChange={handleChange}
               placeholder="쉼표로 구분해 입력해 주세요. 예: react, css"
+              {...register("tags")}
             />
           </label>
           <button type="submit" className="primary">
-            {pending ? "저장 중…" : slug ? "수정 완료" : "게시하기"}
+            {isSubmitting ? "저장 중…" : slug ? "수정 완료" : "게시하기"}
           </button>
         </fieldset>
       </form>
