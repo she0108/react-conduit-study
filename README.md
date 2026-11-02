@@ -1,10 +1,29 @@
 # Conduit 시작 템플릿
 
-Vite + React 템플릿에 [MSW](https://mswjs.io)로 만든 RealWorld 모의 API를 더한 시작점입니다. 별도 서버 없이 `npm install`과 `npm run dev`만으로 실행합니다. MSW 3에 맞춰 Node.js 22.12 이상이 필요합니다.
+Vite + React 템플릿에 모의 API를 더한 시작점입니다. 라우팅, Markdown 표시, 화면은 여기서부터 직접 만들어 봅니다.
+
+| 브랜치                 | 내용                                        |
+| ---------------------- | ------------------------------------------- |
+| `main`                 | 시작점                                      |
+| `react-only`           | 상태, 조회, 폼을 직접 구현한 완성본         |
+| `react-with-libraries` | 상태, 조회, 폼을 라이브러리로 구현한 완성본 |
+
+## 실행
+
+Node.js 22.12 이상이 필요합니다.
+
+```sh
+npm install
+npm run dev
+```
 
 ## 모의 API
 
-앱에서 `/api`로 요청하면 브라우저의 서비스 워커가 응답합니다. 응답 형식과 상태 코드는 [RealWorld 공식 API 계약](https://github.com/realworld-apps/realworld/blob/main/specs/api/openapi.yml)을 따릅니다. 인증이 필요한 요청에는 `Authorization: Token <token>` 헤더를 보냅니다.
+서버 없이 [MSW](https://mswjs.io)가 브라우저에서 `/api` 요청에 응답합니다. 응답 형식은 [RealWorld API 계약](https://github.com/realworld-apps/realworld/blob/main/specs/api/openapi.yml)을 따르고, 코드는 `src/mocks/`에 있습니다.
+
+- 데모 계정: `demo@conduit.test` / `password123`
+- 데이터는 이 브라우저의 localStorage에만 저장됩니다. 비밀번호도 암호화 없이 저장되니 **실제 비밀번호를 쓰지 마세요.**
+- 처음 데이터로 되돌리기: 콘솔에서 `localStorage.removeItem("conduit-mock-db")` 실행 후 새로고침
 
 | 영역   | 요청                                                                                                                                 |
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -13,9 +32,3 @@ Vite + React 템플릿에 [MSW](https://mswjs.io)로 만든 RealWorld 모의 API
 | 댓글   | `GET·POST /api/articles/:slug/comments`, `DELETE /api/articles/:slug/comments/:id`                                                   |
 | 프로필 | `GET /api/profiles/:username`, `POST·DELETE /api/profiles/:username/follow`                                                          |
 | 태그   | `GET /api/tags`                                                                                                                      |
-
-바로 로그인할 수 있는 데모 계정은 `demo@conduit.test` / `password123`입니다.
-
-데이터는 브라우저의 localStorage에 저장되어 새로고침해도 유지되며, 다른 브라우저나 사용자와 공유되지 않습니다. 처음 데이터로 되돌리려면 개발자 도구 콘솔에서 `localStorage.removeItem("conduit-mock-db")`를 실행하고 새로고침합니다.
-
-핸들러는 `src/mocks/handlers.js`, 초기 데이터는 `src/mocks/db.js`에 있습니다. `public/mockServiceWorker.js`는 MSW가 생성한 파일이므로 수정하지 않습니다. 배포할 때도 모의 API로 동작합니다.
