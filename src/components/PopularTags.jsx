@@ -9,39 +9,26 @@ import styles from "./PopularTags.module.css";
 export default function PopularTags({ className = "" }) {
   const [tags, setTags] = useState(null);
   const [tagsError, setTagsError] = useState(null);
-  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
 
     getTags(controller.signal)
       .then((data) => {
-        if (!controller.signal.aborted) {
-          setTags(data.tags);
-          setTagsError(null);
-        }
+        if (!controller.signal.aborted) setTags(data.tags);
       })
       .catch((error) => {
         if (!controller.signal.aborted) setTagsError(error);
       });
 
     return () => controller.abort();
-  }, [reloadCount]);
-
-  function retryTags() {
-    setTagsError(null);
-    setTags(null);
-    setReloadCount((value) => value + 1);
-  }
+  }, []);
 
   return (
     <aside className={`${styles.sidebar} ${className}`}>
       <h2>인기 태그</h2>
       {tagsError ? (
-        <>
-          <ErrorMessages error={tagsError} />
-          <button onClick={retryTags}>태그 다시 시도</button>
-        </>
+        <ErrorMessages error={tagsError} />
       ) : tags === null ? (
         <p role="status">태그를 불러오는 중…</p>
       ) : tags.length ? (

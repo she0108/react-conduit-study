@@ -29,7 +29,6 @@ function ArticleContent({ slug }) {
   const [deleteError, setDeleteError] = useState(null);
   const [article, setArticle] = useState(null);
   const [error, setError] = useState(null);
-  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -46,12 +45,7 @@ function ArticleContent({ slug }) {
       });
 
     return () => controller.abort();
-  }, [slug, reloadCount, handleAuthError]);
-
-  function retry() {
-    setError(null);
-    setReloadCount((value) => value + 1);
-  }
+  }, [slug, handleAuthError]);
 
   async function handleDelete() {
     if (
@@ -83,7 +77,6 @@ function ArticleContent({ slug }) {
             : "글을 불러오지 못했습니다"}
         </h1>
         <ErrorMessages error={error} />
-        <button onClick={retry}>다시 시도</button>
       </section>
     );
 

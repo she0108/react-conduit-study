@@ -5,7 +5,6 @@ export default function ArticleList({
   articles,
   loading,
   error,
-  onRetry,
   onFavoriteChange,
 }) {
   if (loading)
@@ -15,13 +14,7 @@ export default function ArticleList({
       </p>
     );
 
-  if (error)
-    return (
-      <div>
-        <ErrorMessages error={error} />
-        <button onClick={onRetry}>다시 시도</button>
-      </div>
-    );
+  if (error) return <ErrorMessages error={error} />;
 
   if (!articles.length)
     return <p className="status">아직 게시된 글이 없습니다.</p>;

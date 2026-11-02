@@ -10,7 +10,6 @@ export default function AuthProvider({ children }) {
     status: getToken() ? "loading" : "anonymous",
     error: null,
   }));
-  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     if (!getToken()) return;
@@ -32,7 +31,7 @@ export default function AuthProvider({ children }) {
       });
 
     return () => controller.abort();
-  }, [reloadCount]);
+  }, []);
 
   function saveSession(user) {
     saveToken(user.token);
@@ -51,15 +50,8 @@ export default function AuthProvider({ children }) {
     [logout],
   );
 
-  function retry() {
-    setAuth({ user: null, status: "loading", error: null });
-    setReloadCount((value) => value + 1);
-  }
-
   return (
-    <AuthContext
-      value={{ ...auth, saveSession, logout, retry, handleAuthError }}
-    >
+    <AuthContext value={{ ...auth, saveSession, logout, handleAuthError }}>
       {children}
     </AuthContext>
   );

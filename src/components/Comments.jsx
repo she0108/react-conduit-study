@@ -15,7 +15,6 @@ export default function Comments({ slug }) {
 
   const [comments, setComments] = useState(null);
   const [error, setError] = useState(null);
-  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -32,21 +31,13 @@ export default function Comments({ slug }) {
       });
 
     return () => controller.abort();
-  }, [slug, reloadCount, handleAuthError]);
-
-  function retry() {
-    setError(null);
-    setReloadCount((value) => value + 1);
-  }
+  }, [slug, handleAuthError]);
 
   return (
     <section className={styles.section} aria-label="댓글">
       <h2>댓글</h2>
       {error ? (
-        <>
-          <ErrorMessages error={error} />
-          <button onClick={retry}>댓글 다시 시도</button>
-        </>
+        <ErrorMessages error={error} />
       ) : comments === null ? (
         <p role="status">댓글을 불러오고 있습니다…</p>
       ) : (

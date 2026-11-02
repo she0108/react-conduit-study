@@ -74,7 +74,6 @@ export default function HomePage() {
             articles={list.articles}
             loading={list.loading}
             error={list.error}
-            onRetry={list.refresh}
             onFavoriteChange={list.updateArticleFavorite}
           />
           {!list.loading && !list.error && (

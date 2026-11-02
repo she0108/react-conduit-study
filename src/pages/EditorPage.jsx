@@ -31,7 +31,6 @@ function Editor({ slug }) {
   const [error, setError] = useState(null);
   const [pending, setPending] = useState(false);
   const [tagInput, setTagInput] = useState("");
-  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     if (!slug) return;
@@ -63,7 +62,7 @@ function Editor({ slug }) {
       });
 
     return () => controller.abort();
-  }, [slug, user.username, reloadCount, handleAuthError]);
+  }, [slug, user.username, handleAuthError]);
 
   function handleChange(event) {
     setArticle((previous) => ({
@@ -148,14 +147,6 @@ function Editor({ slug }) {
       <section className="container page">
         <h1>수정할 글을 불러오지 못했습니다</h1>
         <ErrorMessages error={loadState.error} />
-        <button
-          onClick={() => {
-            setLoadState({ status: "loading", error: null });
-            setReloadCount((value) => value + 1);
-          }}
-        >
-          다시 시도
-        </button>
       </section>
     );
 

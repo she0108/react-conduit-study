@@ -47,7 +47,6 @@ function Profile({ username, favorites }) {
 
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
-  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -64,7 +63,7 @@ function Profile({ username, favorites }) {
       });
 
     return () => controller.abort();
-  }, [username, reloadCount, handleAuthError]);
+  }, [username, handleAuthError]);
 
   const maxPage = Math.max(1, getPageCount(list.total));
 
@@ -94,14 +93,6 @@ function Profile({ username, favorites }) {
       <section className="container page">
         <h1>프로필을 불러오지 못했습니다</h1>
         <ErrorMessages error={error} />
-        <button
-          onClick={() => {
-            setError(null);
-            setReloadCount((value) => value + 1);
-          }}
-        >
-          다시 시도
-        </button>
       </section>
     );
 
@@ -153,7 +144,6 @@ function Profile({ username, favorites }) {
           articles={list.articles}
           loading={list.loading}
           error={list.error}
-          onRetry={list.refresh}
           onFavoriteChange={handleFavoriteChange}
         />
         {!list.loading && !list.error && (
