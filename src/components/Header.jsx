@@ -22,7 +22,11 @@ export default function Header() {
             <>
               <NavLink to="/editor">새 글 쓰기</NavLink>
               <NavLink to="/settings">설정</NavLink>
-              <NavLink to={`/profile/${encodeURIComponent(user.username)}`}>
+              <NavLink
+                to={`/profile/${encodeURIComponent(user.username)}`}
+                className={styles.profile}
+                title={user.username}
+              >
                 {user.username}
               </NavLink>
               <button className={styles.logout} onClick={handleLogout}>

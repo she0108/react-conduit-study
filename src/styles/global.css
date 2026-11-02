@@ -199,3 +199,10 @@ blockquote {
     padding-inline: 0.65rem;
   }
 }
+
+button,
+.button {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
