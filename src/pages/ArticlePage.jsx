@@ -69,14 +69,7 @@ export default function ArticlePage() {
           <div className={styles.toolbar}>
             <ArticleMeta article={article} />
             <FavoriteButton article={article} />
-            <FollowButton
-              profile={article.author}
-              onChange={(author) =>
-                queryClient.setQueryData(["article", slug, token], {
-                  article: { ...article, author },
-                })
-              }
-            />
+            <FollowButton profile={article.author} />
             {user?.username === article.author.username && (
               <Link
                 className="button"

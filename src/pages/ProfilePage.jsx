@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useParams, useSearchParams } from "react-router";
 
 import { getProfile } from "../apis/profiles.js";
@@ -17,19 +17,7 @@ import styles from "./ProfilePage.module.css";
 export default function ProfilePage({ favorites = false }) {
   const { username } = useParams();
   const { user } = useCurrentUser();
-
-  return (
-    <Profile
-      key={`${username}:${user?.token || ""}`}
-      username={username}
-      favorites={favorites}
-    />
-  );
-}
-
-function Profile({ username, favorites }) {
-  const { user } = useCurrentUser();
-  const handleAuthError = useAuthStore((state) => state.handleAuthError);
+  const token = useAuthStore((state) => state.token);
   const [params] = useSearchParams();
 
   const page = getPage(params.get("page"));
@@ -40,29 +28,12 @@ function Profile({ username, favorites }) {
     page,
   });
 
-  const [profile, setProfile] = useState(null);
-  const [error, setError] = useState(null);
+  const { data, error, isPending, isLoadingError } = useQuery({
+    queryKey: ["profile", username, token],
+    queryFn: () => getProfile(username),
+  });
 
-  useEffect(() => {
-    let ignore = false;
-
-    getProfile(username)
-      .then((data) => {
-        if (!ignore) setProfile(data.profile);
-      })
-      .catch((error) => {
-        if (!ignore) {
-          handleAuthError(error);
-          setError(error);
-        }
-      });
-
-    return () => {
-      ignore = true;
-    };
-  }, [username, handleAuthError]);
-
-  if (error)
+  if (isLoadingError)
     return (
       <section className="container page">
         <h1>프로필을 불러오지 못했습니다</h1>
@@ -70,13 +41,14 @@ function Profile({ username, favorites }) {
       </section>
     );
 
-  if (!profile)
+  if (isPending)
     return (
       <p className="container status" role="status">
         프로필을 불러오고 있습니다…
       </p>
     );
 
+  const { profile } = data;
   const profileUrl = `/profile/${encodeURIComponent(username)}`;
 
   return (
@@ -87,7 +59,7 @@ function Profile({ username, favorites }) {
           <h1>{profile.username}</h1>
           <p>{profile.bio || "아직 소개가 없습니다."}</p>
           <div className={styles.actions}>
-            <FollowButton profile={profile} onChange={setProfile} />
+            <FollowButton profile={profile} />
             {user?.username === username && (
               <Link className="button" to="/settings">
                 프로필 설정
