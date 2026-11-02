@@ -4,6 +4,7 @@ import Markdown from 'react-markdown'
 import { getArticle } from '../apis/articles.js'
 import { useAuth } from '../hooks/useAuth.js'
 import ArticleMeta from '../components/ArticleMeta.jsx'
+import Comments from '../components/Comments.jsx'
 import FavoriteButton from '../components/FavoriteButton.jsx'
 import ErrorMessages from '../components/ErrorMessages.jsx'
 import styles from './ArticlePage.module.css'
@@ -79,6 +80,7 @@ function ArticleContent({ slug }) {
             </Link>
           ))}
         </div>
+        <Comments slug={slug} />
       </div>
     </article>
   )
