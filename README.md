@@ -25,7 +25,7 @@ npm run preview
 | URL                            | 파일                                | 주요 기능                                    |
 | ------------------------------ | ----------------------------------- | -------------------------------------------- |
 | `/`                            | `src/pages/HomePage.jsx`            | 전체·개인 피드, 태그, 페이지네이션           |
-| `/login`, `/register`          | `LoginPage.jsx`, `RegisterPage.jsx` | 로그인·가입, 원래 내부 경로 복귀             |
+| `/login`, `/register`          | `LoginPage.jsx`, `RegisterPage.jsx` | 로그인·가입, 보호 경로 복귀                  |
 | `/article/:slug`               | `ArticlePage.jsx`                   | Markdown, 좋아요, 팔로우, 댓글, 본인 글 삭제 |
 | `/editor`, `/editor/:slug`     | `EditorPage.jsx`                    | 제어 폼, 태그, 작성·수정, 작성자 확인        |
 | `/profile/:username`           | `ProfilePage.jsx`                   | 프로필·작성한 글                             |

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 import { favoriteArticle, unfavoriteArticle } from "../../apis/articles.js";
 import { useAuth } from "../../hooks/useAuth.js";
@@ -7,7 +7,6 @@ import ErrorMessages from "../common/ErrorMessages.jsx";
 
 export default function FavoriteButton({ article, onFavoriteChange }) {
   const { user, handleAuthError } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
 
   const [pending, setPending] = useState(false);
@@ -15,9 +14,7 @@ export default function FavoriteButton({ article, onFavoriteChange }) {
 
   async function handleClick() {
     if (!user) {
-      navigate("/login", {
-        state: { from: location.pathname + location.search },
-      });
+      navigate("/login");
       return;
     }
 

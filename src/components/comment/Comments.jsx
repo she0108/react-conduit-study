@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link } from "react-router";
 
 import { getComments } from "../../apis/comments.js";
 import { useAuth } from "../../hooks/useAuth.js";
@@ -11,7 +11,6 @@ import styles from "./Comments.module.css";
 
 export default function Comments({ slug }) {
   const { user, handleAuthError } = useAuth();
-  const location = useLocation();
 
   const [comments, setComments] = useState(null);
   const [error, setError] = useState(null);
@@ -53,13 +52,7 @@ export default function Comments({ slug }) {
             />
           ) : (
             <p>
-              <Link
-                to="/login"
-                state={{ from: location.pathname + location.search }}
-              >
-                로그인
-              </Link>{" "}
-              후 댓글을 남겨 보세요.
+              <Link to="/login">로그인</Link> 후 댓글을 남겨 보세요.
             </p>
           )}
           <CommentList
