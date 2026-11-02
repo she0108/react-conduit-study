@@ -3,6 +3,7 @@ import { useState } from "react";
 import { updateUser } from "../apis/auth.js";
 import { useAuth } from "../hooks/useAuth.js";
 import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
+import { getToken } from "../utils/authStorage.js";
 import ErrorMessages from "../components/ErrorMessages.jsx";
 
 function toSettingsForm(user) {
@@ -16,7 +17,7 @@ function toSettingsForm(user) {
 }
 
 export default function SettingsPage() {
-  const { user, updateCurrentUser, handleAuthError } = useAuth();
+  const { user, saveSession, handleAuthError } = useAuth();
   const logoutToHome = useLogoutToHome();
 
   const [form, setForm] = useState(() => toSettingsForm(user));
@@ -53,12 +54,15 @@ export default function SettingsPage() {
       ...(form.password ? { password: form.password } : {}),
     };
 
+    const token = getToken();
+
     try {
       const { user: updatedUser } = await updateUser(payload);
 
-      // 요청을 시작한 세션이 유지될 때만 사용자 정보와 저장 완료 표시를 갱신한다.
-      if (!updateCurrentUser(updatedUser, user.token)) return;
+      // 저장 중 로그아웃했거나 계정이 바뀌었다면 늦은 응답으로 세션을 되살리지 않는다.
+      if (getToken() !== token) return;
 
+      saveSession(updatedUser);
       setForm(toSettingsForm(updatedUser));
       setSaved(true);
     } catch (error) {

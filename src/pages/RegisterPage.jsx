@@ -7,7 +7,7 @@ import { getReturnPath } from "../utils/returnPath.js";
 import ErrorMessages from "../components/ErrorMessages.jsx";
 
 export default function RegisterPage() {
-  const { user, startSession } = useAuth();
+  const { user, saveSession } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -41,7 +41,7 @@ export default function RegisterPage() {
         password,
       });
 
-      startSession(data.user);
+      saveSession(data.user);
       navigate(from, { replace: true });
     } catch (error) {
       setError(error);

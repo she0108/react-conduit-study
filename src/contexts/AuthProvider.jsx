@@ -34,21 +34,10 @@ export default function AuthProvider({ children }) {
     return () => controller.abort();
   }, [reloadCount]);
 
-  const startSession = useCallback((user) => {
+  function saveSession(user) {
     saveToken(user.token);
     setAuth({ user, status: "authenticated", error: null });
-  }, []);
-
-  const updateCurrentUser = useCallback(
-    (user, expectedToken) => {
-      // 저장 요청 도중 로그아웃하거나 계정이 바뀌면 이전 응답으로 세션을 복원하지 않는다.
-      if (!expectedToken || expectedToken !== getToken()) return false;
-
-      startSession(user);
-      return true;
-    },
-    [startSession],
-  );
+  }
 
   const logout = useCallback(() => {
     removeToken();
@@ -71,14 +60,7 @@ export default function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{
-        ...auth,
-        startSession,
-        updateCurrentUser,
-        logout,
-        retry,
-        handleAuthError,
-      }}
+      value={{ ...auth, saveSession, logout, retry, handleAuthError }}
     >
       {children}
     </AuthContext.Provider>
