@@ -1,0 +1,37 @@
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 1rem;
+}
+.brand {
+  font-size: 1.85rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+}
+.brand:hover {
+  text-decoration: none;
+}
+.inner nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 1.2rem;
+}
+.inner nav a {
+  color: #737773;
+}
+.inner nav a[aria-current='page'] {
+  color: #242b24;
+}
+@media (max-width: 600px) {
+  .inner {
+    align-items: flex-start;
+  }
+  .inner nav {
+    gap: 0.7rem;
+    font-size: 0.9rem;
+  }
+}

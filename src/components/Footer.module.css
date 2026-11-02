@@ -1,0 +1,16 @@
+.footer {
+  background: #f5f6f5;
+  padding: 1.5rem 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.footer > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+.footer a {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
