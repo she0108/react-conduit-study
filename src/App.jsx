@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router'
 import Layout from './components/Layout.jsx'
+import HomePage from './pages/HomePage.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
@@ -8,15 +9,7 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route
-          index
-          element={
-            <section className="container page">
-              <h1>conduit</h1>
-              <p>생각을 나누고, 함께 배우는 공간.</p>
-            </section>
-          }
-        />
+        <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
         {[

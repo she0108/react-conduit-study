@@ -1,0 +1,31 @@
+.card {
+  padding: 1.7rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.preview {
+  display: block;
+  color: inherit;
+}
+.preview:hover {
+  text-decoration: none;
+}
+.preview h2 {
+  font-size: 1.35rem;
+  margin: 1rem 0 0.4rem;
+}
+.preview p {
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 0 1rem;
+}
+.preview span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: 0.6rem;
+}
