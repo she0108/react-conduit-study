@@ -12,24 +12,26 @@ export default function AuthProvider({ children }) {
   useEffect(() => {
     if (!getToken()) return;
 
-    const controller = new AbortController();
+    let ignore = false;
 
-    getCurrentUser(controller.signal)
+    getCurrentUser()
       .then((data) => {
-        if (!controller.signal.aborted) setUser(data.user);
+        if (!ignore) setUser(data.user);
       })
       .catch((error) => {
-        if (controller.signal.aborted) return;
+        if (ignore) return;
 
         // 만료된 토큰은 지우고, 일시적인 실패는 토큰을 유지한 채 오류를 보여 준다.
         if (error.status === 401) removeToken();
         else setError(error);
       })
       .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!ignore) setLoading(false);
       });
 
-    return () => controller.abort();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   function saveSession(nextUser) {

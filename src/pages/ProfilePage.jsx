@@ -42,20 +42,22 @@ function Profile({ username, favorites }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let ignore = false;
 
-    getProfile(username, controller.signal)
+    getProfile(username)
       .then((data) => {
-        if (!controller.signal.aborted) setProfile(data.profile);
+        if (!ignore) setProfile(data.profile);
       })
       .catch((error) => {
-        if (!controller.signal.aborted) {
+        if (!ignore) {
           handleAuthError(error);
           setError(error);
         }
       });
 
-    return () => controller.abort();
+    return () => {
+      ignore = true;
+    };
   }, [username, handleAuthError]);
 
   function handleProfileChange(updated) {

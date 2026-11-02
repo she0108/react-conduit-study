@@ -35,11 +35,11 @@ function Editor({ slug }) {
   useEffect(() => {
     if (!slug) return;
 
-    const controller = new AbortController();
+    let ignore = false;
 
-    getArticle(slug, controller.signal)
+    getArticle(slug)
       .then(({ article }) => {
-        if (controller.signal.aborted) return;
+        if (ignore) return;
 
         if (article.author.username !== user.username) {
           setLoadState({ status: "forbidden", error: null });
@@ -55,13 +55,15 @@ function Editor({ slug }) {
         setLoadState({ status: "ready", error: null });
       })
       .catch((error) => {
-        if (!controller.signal.aborted) {
+        if (!ignore) {
           handleAuthError(error);
           setLoadState({ status: "error", error });
         }
       });
 
-    return () => controller.abort();
+    return () => {
+      ignore = true;
+    };
   }, [slug, user.username, handleAuthError]);
 
   function handleChange(event) {

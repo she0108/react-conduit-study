@@ -15,23 +15,20 @@ export class ApiError extends Error {
 
 export async function request(
   path,
-  { method = "GET", body, signal, token = getToken() } = {},
+  { method = "GET", body, token = getToken() } = {},
 ) {
   let response;
 
   try {
     response = await fetch(`${baseUrl}${path}`, {
       method,
-      signal,
       headers: {
         ...(body ? { "Content-Type": "application/json" } : {}),
         ...(token ? { Authorization: `Token ${token}` } : {}),
       },
       ...(body ? { body: JSON.stringify(body) } : {}),
     });
-  } catch (error) {
-    if (error.name === "AbortError") throw error;
-
+  } catch {
     throw new ApiError(
       "서버에 연결할 수 없습니다. 네트워크를 확인하고 다시 시도해 주세요.",
     );

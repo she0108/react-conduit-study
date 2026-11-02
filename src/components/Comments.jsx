@@ -17,20 +17,22 @@ export default function Comments({ slug }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let ignore = false;
 
-    getComments(slug, controller.signal)
+    getComments(slug)
       .then((data) => {
-        if (!controller.signal.aborted) setComments(data.comments);
+        if (!ignore) setComments(data.comments);
       })
       .catch((error) => {
-        if (!controller.signal.aborted) {
+        if (!ignore) {
           handleAuthError(error);
           setError(error);
         }
       });
 
-    return () => controller.abort();
+    return () => {
+      ignore = true;
+    };
   }, [slug, handleAuthError]);
 
   return (

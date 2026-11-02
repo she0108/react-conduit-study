@@ -2,8 +2,8 @@ import { request } from "./client.js";
 
 const commentsPath = (slug) => `/articles/${encodeURIComponent(slug)}/comments`;
 
-export function getComments(slug, signal) {
-  return request(commentsPath(slug), { signal });
+export function getComments(slug) {
+  return request(commentsPath(slug));
 }
 
 export function createComment(slug, body) {

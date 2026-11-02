@@ -22,42 +22,41 @@ export function useArticles({
   const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let ignore = false;
 
     async function loadArticles() {
       setLoading(true);
       setError(null);
 
       try {
-        const data = await getArticles(
-          {
-            feed,
-            tag,
-            author,
-            favorited,
-            limit: PAGE_SIZE,
-            offset: (page - 1) * PAGE_SIZE,
-          },
-          controller.signal,
-        );
+        const data = await getArticles({
+          feed,
+          tag,
+          author,
+          favorited,
+          limit: PAGE_SIZE,
+          offset: (page - 1) * PAGE_SIZE,
+        });
 
-        if (controller.signal.aborted) return;
+        if (ignore) return;
 
         setArticles(data.articles);
         setTotal(data.articlesCount);
       } catch (error) {
-        if (controller.signal.aborted) return;
+        if (ignore) return;
 
         handleAuthError(error);
         setError(error);
       } finally {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!ignore) setLoading(false);
       }
     }
 
     loadArticles();
 
-    return () => controller.abort();
+    return () => {
+      ignore = true;
+    };
     // token과 reloadCount는 로그인 변경과 refresh 때 다시 조회하기 위한 의존성이다.
   }, [feed, tag, author, favorited, page, token, reloadCount, handleAuthError]);
 

@@ -2,20 +2,18 @@ import { request } from "./client.js";
 
 const articlePath = (slug) => `/articles/${encodeURIComponent(slug)}`;
 
-export function getArticles({ feed = "global", ...filters } = {}, signal) {
+export function getArticles({ feed = "global", ...filters } = {}) {
   const params = new URLSearchParams();
 
   for (const [key, value] of Object.entries(filters)) {
     if (value !== undefined && value !== "") params.set(key, value);
   }
 
-  return request(`/articles${feed === "following" ? "/feed" : ""}?${params}`, {
-    signal,
-  });
+  return request(`/articles${feed === "following" ? "/feed" : ""}?${params}`);
 }
 
-export function getArticle(slug, signal) {
-  return request(articlePath(slug), { signal });
+export function getArticle(slug) {
+  return request(articlePath(slug));
 }
 
 export function createArticle(article) {

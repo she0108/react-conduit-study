@@ -31,20 +31,22 @@ function ArticleContent({ slug }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let ignore = false;
 
-    getArticle(slug, controller.signal)
+    getArticle(slug)
       .then((data) => {
-        if (!controller.signal.aborted) setArticle(data.article);
+        if (!ignore) setArticle(data.article);
       })
       .catch((error) => {
-        if (!controller.signal.aborted) {
+        if (!ignore) {
           handleAuthError(error);
           setError(error);
         }
       });
 
-    return () => controller.abort();
+    return () => {
+      ignore = true;
+    };
   }, [slug, handleAuthError]);
 
   async function handleDelete() {

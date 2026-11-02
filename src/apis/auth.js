@@ -13,8 +13,8 @@ export function register(user) {
   return request("/users", { method: "POST", body: { user }, token: null });
 }
 
-export function getCurrentUser(signal) {
-  return request("/user", { signal });
+export function getCurrentUser() {
+  return request("/user");
 }
 
 export function updateUser(user) {

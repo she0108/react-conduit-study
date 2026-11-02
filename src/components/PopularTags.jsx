@@ -11,17 +11,19 @@ export default function PopularTags({ className = "" }) {
   const [tagsError, setTagsError] = useState(null);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let ignore = false;
 
-    getTags(controller.signal)
+    getTags()
       .then((data) => {
-        if (!controller.signal.aborted) setTags(data.tags);
+        if (!ignore) setTags(data.tags);
       })
       .catch((error) => {
-        if (!controller.signal.aborted) setTagsError(error);
+        if (!ignore) setTagsError(error);
       });
 
-    return () => controller.abort();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   return (
