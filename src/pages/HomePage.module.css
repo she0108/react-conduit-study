@@ -29,26 +29,6 @@
 
 .sidebar {
   align-self: start;
-  background: #f3f4f3;
-  padding: 1.1rem;
-  border-radius: 4px;
-}
-
-.sidebar h2 {
-  font-size: 1rem;
-  margin: 0 0 1rem;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.tags a {
-  background: #666f66;
-  color: white;
-  border: none;
 }
 
 @media (max-width: 760px) {
