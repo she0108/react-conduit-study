@@ -23,8 +23,6 @@ export default function RegisterPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (pending) return;
-
     if (!username.trim() || !email.trim() || !password) {
       setError("이름, 이메일, 비밀번호를 입력해 주세요.");
       return;

@@ -50,11 +50,7 @@ function ArticleContent({ slug }) {
   }, [slug, handleAuthError]);
 
   async function handleDelete() {
-    if (
-      deleting ||
-      !window.confirm("이 글을 삭제할까요? 댓글도 함께 삭제됩니다.")
-    )
-      return;
+    if (!window.confirm("이 글을 삭제할까요? 댓글도 함께 삭제됩니다.")) return;
 
     setDeleting(true);
     setDeleteError(null);

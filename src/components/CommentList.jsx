@@ -35,7 +35,7 @@ function Comment({ slug, comment, onDeleted }) {
   const [error, setError] = useState(null);
 
   async function handleDelete() {
-    if (pending || !window.confirm("이 댓글을 삭제할까요?")) return;
+    if (!window.confirm("이 댓글을 삭제할까요?")) return;
 
     setPending(true);
     setError(null);

@@ -22,8 +22,6 @@ export default function LoginPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (pending) return;
-
     if (!email.trim() || !password) {
       setError("이메일과 비밀번호를 입력해 주세요.");
       return;

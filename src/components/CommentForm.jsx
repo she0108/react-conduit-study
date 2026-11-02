@@ -16,8 +16,6 @@ export default function CommentForm({ slug, onCreated }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (pending) return;
-
     if (!body.trim()) {
       setError("댓글 내용을 입력해 주세요.");
       return;

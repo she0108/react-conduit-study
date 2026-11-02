@@ -95,8 +95,6 @@ function Editor({ slug }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (pending || loadState.status !== "ready") return;
-
     if (
       ![article.title, article.description, article.body].every((value) =>
         value.trim(),

@@ -23,8 +23,6 @@ export default function FollowButton({ profile, onChange }) {
       return;
     }
 
-    if (pending) return;
-
     setPending(true);
     setError(null);
 

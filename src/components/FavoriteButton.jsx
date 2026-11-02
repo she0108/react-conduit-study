@@ -21,8 +21,6 @@ export default function FavoriteButton({ article, onFavoriteChange }) {
       return;
     }
 
-    if (pending) return;
-
     setPending(true);
     setError(null);
 

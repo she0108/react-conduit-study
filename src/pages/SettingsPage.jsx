@@ -36,8 +36,6 @@ export default function SettingsPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    if (pending) return;
-
     if (!form.username.trim() || !form.email.trim()) {
       setError("사용자 이름과 이메일을 입력해 주세요.");
       return;
