@@ -1,6 +1,8 @@
 import { Route, Routes } from 'react-router'
 import Layout from './components/Layout.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import LoginPage from './pages/LoginPage.jsx'
+import RegisterPage from './pages/RegisterPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 export default function App() {
   return (
@@ -15,22 +17,8 @@ export default function App() {
             </section>
           }
         />
-        <Route
-          path="login"
-          element={
-            <section className="formPage">
-              <h1>로그인</h1>
-            </section>
-          }
-        />
-        <Route
-          path="register"
-          element={
-            <section className="formPage">
-              <h1>회원가입</h1>
-            </section>
-          }
-        />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
         {[
           'article/:slug',
           'profile/:username',
