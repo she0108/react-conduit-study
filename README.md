@@ -6,11 +6,10 @@ props·state·effect를 배운 뒤 실제 기능의 연결을 찾아 읽는 Java
 
 ```sh
 npm install
-cp .env.example .env.local
 npm run dev
 ```
 
-Node.js 22.12 이상 또는 20.x의 20.19 이상이 필요합니다. Vite가 표시한 주소로 접속합니다. 기본 API는 `https://api.realworld.show/api`이며, 다른 RealWorld 호환 서버를 사용하려면 `.env.local`의 `VITE_API_BASE_URL`을 바꾼 뒤 개발 서버를 재시작합니다. 비밀키를 `VITE_` 환경변수에 넣지 않습니다.
+Node.js 22.12 이상이 필요합니다. Vite가 표시한 주소로 접속합니다. 별도 서버 없이 MSW 모의 API로 동작합니다.
 
 ```sh
 npm run lint
@@ -43,6 +42,7 @@ npm run preview
 - `src/pages/`: URL 해석, 페이지 데이터와 폼 상태.
 - `src/components/`: Layout, 반복 UI, 댓글, 명시적인 props와 callback.
 - `src/utils/`: 토큰 저장, 날짜 표시, 페이지 값 보정.
+- `src/mocks/`: MSW 모의 API의 핸들러와 초기 데이터.
 - `src/styles/global.css`: 공통 기본 요소·변수. 각 화면·컴포넌트 스타일은 인접한 CSS Modules에 둡니다.
 
 읽기 흐름은 `URL → page/useArticles → API → fetch → state → props → UI`입니다. 쓰기는 이벤트 핸들러에서 요청하고 성공 응답을 상태에 반영합니다.
@@ -58,7 +58,9 @@ npm run preview
 
 ## API와 인증
 
-[공식 RealWorld API](https://docs.realworld.show/specifications/frontend/api/)를 사용합니다. 공개 데모에서는 비로그인 사용자는 데모 글만, 로그인 사용자는 본인과 데모 계정의 글만 볼 수 있습니다. 팔로우·개인 피드는 데모 작성자로 확인하세요. 서로 다른 일반 계정 사이의 글 공유는 제한됩니다.
+[MSW](https://mswjs.io)로 만든 모의 API를 사용합니다. 응답 형식과 상태 코드는 [RealWorld 공식 API 계약](https://github.com/realworld-apps/realworld/blob/main/specs/api/openapi.yml)을 따릅니다. 데모 계정은 `demo@conduit.test` / `password123`입니다.
+
+데이터는 브라우저의 localStorage에 저장되어 새로고침해도 유지되고, 다른 브라우저나 사용자와 공유되지 않습니다. 처음 데이터로 되돌리려면 콘솔에서 `localStorage.removeItem("conduit-mock-db")`를 실행하고 새로고침합니다.
 
 토큰만 localStorage에 저장하고, 시작할 때 `/user`로 사용자를 복원합니다. 401이면 토큰을 지우고, 일시적인 연결·서버 오류면 토큰을 유지한 채 오류 화면과 새로고침 버튼을 보여 줍니다. 비밀번호·사용자 객체 전체는 저장하지 않습니다. 이 토큰 저장 방식은 학습용 API 계약에 따른 선택입니다.
 
@@ -70,9 +72,7 @@ npm run preview
 
 본인 학습용 데이터로 가입·로그인·복원·로그아웃, 글 CRUD, 댓글 작성·삭제, 좋아요·해제, 프로필·팔로우·개인 피드, 설정 저장을 확인합니다. 실패 경로는 잘못된 로그인, 공백 입력, 권한 없는 수정 URL, 없는 글, 네트워크 실패, 빠른 화면 이동, 로그아웃 후 뒤로가기를 확인합니다. 모바일 폭·키보드 이동도 별도로 점검합니다.
 
-2026-11-02 브라우저 사전 확인에서 공개 조회, JSON·인증 CORS, 가입·로그인·현재 사용자 조회, 본인 글 CRUD가 성공했습니다. 공개 API의 가용성과 데이터는 서버 상태에 따라 달라집니다.
-
-배포 시 `dist/`를 정적 호스팅하고, `/article/...` 같은 직접 접근도 `index.html`로 보내는 SPA fallback을 설정해야 합니다. API 서버는 배포 Origin의 CORS도 허용해야 합니다.
+배포 시 `dist/`를 정적 호스팅하고, `/article/...` 같은 직접 접근도 `index.html`로 보내는 SPA fallback을 설정해야 합니다. 배포한 뒤에도 모의 API로 동작합니다.
 
 ## 공식 문서
 

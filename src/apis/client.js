@@ -1,8 +1,6 @@
 import { getToken } from "../utils/authStorage.js";
 
-const baseUrl = (
-  import.meta.env.VITE_API_BASE_URL || "https://api.realworld.show/api"
-).replace(/\/$/, "");
+const baseUrl = "/api";
 
 export class ApiError extends Error {
   constructor(message, status = 0, errors = null) {
