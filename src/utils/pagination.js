@@ -7,9 +7,5 @@ export function getPageCount(total) {
 export function getPage(value) {
   const page = Number(value);
 
-  return /^[1-9]\d*$/.test(value ?? "") &&
-    Number.isSafeInteger(page) &&
-    Number.isSafeInteger((page - 1) * PAGE_SIZE)
-    ? page
-    : 1;
+  return Number.isInteger(page) && page > 0 ? page : 1;
 }

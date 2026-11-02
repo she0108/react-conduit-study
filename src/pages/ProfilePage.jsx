@@ -1,16 +1,10 @@
 import { useEffect, useState } from "react";
-import {
-  Link,
-  Navigate,
-  useLocation,
-  useParams,
-  useSearchParams,
-} from "react-router";
+import { Link, useParams, useSearchParams } from "react-router";
 
 import { getProfile } from "../apis/profiles.js";
 import { useAuth } from "../hooks/useAuth.js";
 import { useArticles } from "../hooks/useArticles.js";
-import { getPage, getPageCount } from "../utils/pagination.js";
+import { getPage } from "../utils/pagination.js";
 import Avatar from "../components/Avatar.jsx";
 import FollowButton from "../components/FollowButton.jsx";
 import ArticleList from "../components/ArticleList.jsx";
@@ -35,7 +29,6 @@ export default function ProfilePage({ favorites = false }) {
 function Profile({ username, favorites }) {
   const { user, handleAuthError } = useAuth();
   const [params] = useSearchParams();
-  const location = useLocation();
 
   const page = getPage(params.get("page"));
 
@@ -64,19 +57,6 @@ function Profile({ username, favorites }) {
 
     return () => controller.abort();
   }, [username, handleAuthError]);
-
-  const maxPage = Math.max(1, getPageCount(list.total));
-
-  if (
-    (params.has("page") && params.get("page") !== String(page)) ||
-    (!list.loading && !list.error && page > maxPage)
-  ) {
-    const next = new URLSearchParams(params);
-
-    next.set("page", Math.min(page, maxPage));
-
-    return <Navigate to={`${location.pathname}?${next}`} replace />;
-  }
 
   function handleProfileChange(updated) {
     setProfile(updated);

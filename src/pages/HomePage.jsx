@@ -1,8 +1,8 @@
-import { Link, Navigate, useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 
 import { useAuth } from "../hooks/useAuth.js";
 import { useArticles } from "../hooks/useArticles.js";
-import { getPage, getPageCount } from "../utils/pagination.js";
+import { getPage } from "../utils/pagination.js";
 import ArticleList from "../components/ArticleList.jsx";
 import Pagination from "../components/Pagination.jsx";
 import PopularTags from "../components/PopularTags.jsx";
@@ -19,24 +19,6 @@ export default function HomePage() {
   const page = getPage(params.get("page"));
 
   const list = useArticles({ feed, tag, page });
-
-  const maxPage = Math.max(1, getPageCount(list.total));
-  const canonical = new URLSearchParams(
-    tag ? { tag, page: String(page) } : { feed, page: String(page) },
-  );
-
-  if (
-    (params.has("page") && params.get("page") !== String(page)) ||
-    (!tag && params.get("feed") === "following" && !user) ||
-    (tag && params.has("feed"))
-  )
-    return <Navigate to={`/?${canonical}`} replace />;
-
-  if (!list.loading && !list.error && page > maxPage) {
-    canonical.set("page", maxPage);
-
-    return <Navigate to={`/?${canonical}`} replace />;
-  }
 
   return (
     <>
