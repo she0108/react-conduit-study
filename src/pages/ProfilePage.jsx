@@ -11,6 +11,7 @@ import { useAuth } from '../hooks/useAuth.js'
 import { useArticles } from '../hooks/useArticles.js'
 import { getPage, PAGE_SIZE } from '../utils/pagination.js'
 import Avatar from '../components/Avatar.jsx'
+import FollowButton from '../components/FollowButton.jsx'
 import ArticleList from '../components/ArticleList.jsx'
 import Pagination from '../components/Pagination.jsx'
 import ErrorMessages from '../components/ErrorMessages.jsx'
@@ -62,6 +63,10 @@ function Profile({ username, favorites }) {
     next.set('page', Math.min(page, maxPage))
     return <Navigate to={`${location.pathname}?${next}`} replace />
   }
+  function handleProfileChange(updated) {
+    setProfile(updated)
+    list.refresh()
+  }
   function handleArticleChange(article) {
     if (favorites && !article.favorited) list.refresh()
     else list.updateArticle(article)
@@ -96,6 +101,7 @@ function Profile({ username, favorites }) {
           <h1>{profile.username}</h1>
           <p>{profile.bio || '아직 소개가 없습니다.'}</p>
           <div className={styles.actions}>
+            <FollowButton profile={profile} onChange={handleProfileChange} />
             {user?.username === username && (
               <Link className="button" to="/settings">
                 프로필 설정

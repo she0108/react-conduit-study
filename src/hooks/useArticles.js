@@ -70,7 +70,13 @@ export function useArticles({
         previous && {
           ...previous,
           articles: previous.articles.map((item) =>
-            item.slug === article.slug ? article : item,
+            item.slug === article.slug
+              ? {
+                  ...item,
+                  favorited: article.favorited,
+                  favoritesCount: article.favoritesCount,
+                }
+              : item,
           ),
         },
     )

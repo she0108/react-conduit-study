@@ -5,6 +5,7 @@ import { deleteArticle, getArticle } from '../apis/articles.js'
 import { useAuth } from '../hooks/useAuth.js'
 import ArticleMeta from '../components/ArticleMeta.jsx'
 import Comments from '../components/Comments.jsx'
+import FollowButton from '../components/FollowButton.jsx'
 import FavoriteButton from '../components/FavoriteButton.jsx'
 import ErrorMessages from '../components/ErrorMessages.jsx'
 import styles from './ArticlePage.module.css'
@@ -82,7 +83,22 @@ function ArticleContent({ slug }) {
           <h1>{article.title}</h1>
           <div className={styles.toolbar}>
             <ArticleMeta article={article} />
-            <FavoriteButton article={article} onChange={setArticle} />
+            <FavoriteButton
+              article={article}
+              onChange={(updated) =>
+                setArticle((previous) => ({
+                  ...previous,
+                  favorited: updated.favorited,
+                  favoritesCount: updated.favoritesCount,
+                }))
+              }
+            />
+            <FollowButton
+              profile={article.author}
+              onChange={(author) =>
+                setArticle((previous) => ({ ...previous, author }))
+              }
+            />
             {user?.username === article.author.username && (
               <Link
                 className="button"
