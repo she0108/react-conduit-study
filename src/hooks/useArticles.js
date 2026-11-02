@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { getArticles } from "../apis/articles.js";
 import { PAGE_SIZE } from "../utils/pagination.js";
-import { useAuth } from "./useAuth.js";
+import { useAuthStore } from "../stores/authStore.js";
 
 export function useArticles({
   feed = "global",
@@ -11,7 +11,8 @@ export function useArticles({
   favorited = "",
   page = 1,
 }) {
-  const { user, handleAuthError } = useAuth();
+  const user = useAuthStore((state) => state.user);
+  const handleAuthError = useAuthStore((state) => state.handleAuthError);
 
   const token = user?.token;
 

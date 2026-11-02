@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from "react-router";
 
-import { useAuth } from "../hooks/useAuth.js";
+import { useAuthStore } from "../stores/authStore.js";
 import { useArticles } from "../hooks/useArticles.js";
 import { getPage } from "../utils/pagination.js";
 import ArticleList from "../components/article/ArticleList.jsx";
@@ -10,7 +10,7 @@ import PopularTags from "../components/article/PopularTags.jsx";
 import styles from "./HomePage.module.css";
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
   const [params] = useSearchParams();
 
   const tag = params.get("tag") || "";

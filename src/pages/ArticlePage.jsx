@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import Markdown from "react-markdown";
 
 import { deleteArticle, getArticle } from "../apis/articles.js";
-import { useAuth } from "../hooks/useAuth.js";
+import { useAuthStore } from "../stores/authStore.js";
 import TagLink from "../components/article/TagLink.jsx";
 import ArticleMeta from "../components/article/ArticleMeta.jsx";
 import Comments from "../components/comment/Comments.jsx";
@@ -15,14 +15,15 @@ import styles from "./ArticlePage.module.css";
 
 export default function ArticlePage() {
   const { slug } = useParams();
-  const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
 
   // 글이나 세션이 바뀌면 상세·댓글 상태를 함께 초기화한다.
   return <ArticleContent key={`${slug}:${user?.token || ""}`} slug={slug} />;
 }
 
 function ArticleContent({ slug }) {
-  const { user, handleAuthError } = useAuth();
+  const user = useAuthStore((state) => state.user);
+  const handleAuthError = useAuthStore((state) => state.handleAuthError);
   const navigate = useNavigate();
 
   const [deleting, setDeleting] = useState(false);

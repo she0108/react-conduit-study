@@ -1,4 +1,4 @@
-import { getToken } from "../utils/authStorage.js";
+import { useAuthStore } from "../stores/authStore.js";
 
 const baseUrl = "/api";
 
@@ -13,7 +13,7 @@ export class ApiError extends Error {
 
 export async function request(
   path,
-  { method = "GET", body, token = getToken() } = {},
+  { method = "GET", body, token = useAuthStore.getState().token } = {},
 ) {
   let response;
 

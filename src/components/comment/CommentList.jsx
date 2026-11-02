@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 
 import { deleteComment } from "../../apis/comments.js";
-import { useAuth } from "../../hooks/useAuth.js";
+import { useAuthStore } from "../../stores/authStore.js";
 import Avatar from "../user/Avatar.jsx";
 import ErrorMessages from "../common/ErrorMessages.jsx";
 import { formatDate } from "../../utils/formatDate.js";
@@ -29,7 +29,8 @@ export default function CommentList({ slug, comments, onDeleted }) {
 }
 
 function Comment({ slug, comment, onDeleted }) {
-  const { user, handleAuthError } = useAuth();
+  const user = useAuthStore((state) => state.user);
+  const handleAuthError = useAuthStore((state) => state.handleAuthError);
 
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(null);

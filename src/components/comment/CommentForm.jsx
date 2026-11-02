@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { createComment } from "../../apis/comments.js";
-import { useAuth } from "../../hooks/useAuth.js";
+import { useAuthStore } from "../../stores/authStore.js";
 import { notBlank } from "../../utils/formRules.js";
 import ErrorMessages from "../common/ErrorMessages.jsx";
 import FieldError from "../common/FieldError.jsx";
@@ -10,7 +10,7 @@ import FieldError from "../common/FieldError.jsx";
 import styles from "./Comments.module.css";
 
 export default function CommentForm({ slug, onCreated }) {
-  const { handleAuthError } = useAuth();
+  const handleAuthError = useAuthStore((state) => state.handleAuthError);
 
   const {
     register,

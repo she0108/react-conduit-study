@@ -2,11 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 
 import { favoriteArticle, unfavoriteArticle } from "../../apis/articles.js";
-import { useAuth } from "../../hooks/useAuth.js";
+import { useAuthStore } from "../../stores/authStore.js";
 import ErrorMessages from "../common/ErrorMessages.jsx";
 
 export default function FavoriteButton({ article, onFavoriteChange }) {
-  const { user, handleAuthError } = useAuth();
+  const user = useAuthStore((state) => state.user);
+  const handleAuthError = useAuthStore((state) => state.handleAuthError);
   const navigate = useNavigate();
 
   const [pending, setPending] = useState(false);

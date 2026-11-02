@@ -2,9 +2,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { updateUser } from "../apis/auth.js";
-import { useAuth } from "../hooks/useAuth.js";
+import { useAuthStore } from "../stores/authStore.js";
 import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
-import { getToken } from "../utils/authStorage.js";
 import { emailRules, notBlank } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
 import FieldError from "../components/common/FieldError.jsx";
@@ -20,7 +19,9 @@ function toSettingsForm(user) {
 }
 
 export default function SettingsPage() {
-  const { user, saveSession, handleAuthError } = useAuth();
+  const user = useAuthStore((state) => state.user);
+  const saveSession = useAuthStore((state) => state.saveSession);
+  const handleAuthError = useAuthStore((state) => state.handleAuthError);
   const logoutToHome = useLogoutToHome();
 
   const {
@@ -43,13 +44,13 @@ export default function SettingsPage() {
       ...(password ? { password } : {}),
     };
 
-    const token = getToken();
+    const token = useAuthStore.getState().token;
 
     try {
       const { user: updatedUser } = await updateUser(payload);
 
       // 저장 중 로그아웃했거나 계정이 바뀌었다면 늦은 응답으로 세션을 되살리지 않는다.
-      if (getToken() !== token) return;
+      if (useAuthStore.getState().token !== token) return;
 
       saveSession(updatedUser);
       reset(toSettingsForm(updatedUser));

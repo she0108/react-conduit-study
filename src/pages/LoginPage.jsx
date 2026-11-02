@@ -3,13 +3,14 @@ import { useForm } from "react-hook-form";
 import { Link, Navigate, useLocation, useNavigate } from "react-router";
 
 import { login } from "../apis/auth.js";
-import { useAuth } from "../hooks/useAuth.js";
+import { useAuthStore } from "../stores/authStore.js";
 import { emailRules } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
 import FieldError from "../components/common/FieldError.jsx";
 
 export default function LoginPage() {
-  const { user, saveSession } = useAuth();
+  const user = useAuthStore((state) => state.user);
+  const saveSession = useAuthStore((state) => state.saveSession);
   const location = useLocation();
   const navigate = useNavigate();
 

@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router";
 
 import { createArticle, getArticle, updateArticle } from "../apis/articles.js";
-import { useAuth } from "../hooks/useAuth.js";
+import { useAuthStore } from "../stores/authStore.js";
 import { notBlank } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
 import FieldError from "../components/common/FieldError.jsx";
@@ -23,7 +23,7 @@ function parseTags(value) {
 
 export default function EditorPage() {
   const { slug } = useParams();
-  const { user } = useAuth();
+  const user = useAuthStore((state) => state.user);
 
   return <Editor key={`${slug || "new"}:${user.username}`} slug={slug} />;
 }
@@ -31,7 +31,8 @@ export default function EditorPage() {
 const EMPTY_ARTICLE = { title: "", description: "", body: "", tagList: [] };
 
 function Editor({ slug }) {
-  const { user, handleAuthError } = useAuth();
+  const user = useAuthStore((state) => state.user);
+  const handleAuthError = useAuthStore((state) => state.handleAuthError);
 
   const [article, setArticle] = useState(EMPTY_ARTICLE);
   const [loadState, setLoadState] = useState({
@@ -97,7 +98,7 @@ function Editor({ slug }) {
 
 // 글을 다 불러온 뒤에 마운트해 불러온 값을 폼의 초기값으로 쓴다.
 function EditorForm({ slug, article }) {
-  const { handleAuthError } = useAuth();
+  const handleAuthError = useAuthStore((state) => state.handleAuthError);
   const navigate = useNavigate();
 
   const {
