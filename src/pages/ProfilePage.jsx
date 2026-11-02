@@ -28,12 +28,12 @@ export default function ProfilePage({ favorites = false }) {
     page,
   });
 
-  const { data, error, isPending, isLoadingError } = useQuery({
+  const { data, error, isPending } = useQuery({
     queryKey: ["profile", username, token],
     queryFn: () => getProfile(username),
   });
 
-  if (isLoadingError)
+  if (error)
     return (
       <section className="container page">
         <h1>프로필을 불러오지 못했습니다</h1>

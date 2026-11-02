@@ -21,7 +21,7 @@ export default function ArticlePage() {
   const token = useAuthStore((state) => state.token);
   const navigate = useNavigate();
 
-  const { data, error, isPending, isLoadingError } = useQuery({
+  const { data, error, isPending } = useQuery({
     queryKey: ["article", slug, token],
     queryFn: () => getArticle(slug),
   });
@@ -40,7 +40,7 @@ export default function ArticlePage() {
       deleteMutation.mutate();
   }
 
-  if (isLoadingError)
+  if (error)
     return (
       <section className="container page">
         <h1>

@@ -31,6 +31,6 @@ export function useArticles({
     articles: query.data?.articles ?? [],
     total: query.data?.articlesCount ?? 0,
     loading: query.isPending,
-    error: query.isLoadingError ? query.error : null,
+    error: query.error,
   };
 }

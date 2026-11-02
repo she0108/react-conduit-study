@@ -39,12 +39,12 @@ function EditArticle({ slug }) {
   const { user } = useCurrentUser();
   const token = useAuthStore((state) => state.token);
 
-  const { data, error, isPending, isLoadingError } = useQuery({
+  const { data, error, isPending } = useQuery({
     queryKey: ["article", slug, token],
     queryFn: () => getArticle(slug),
   });
 
-  if (isLoadingError)
+  if (error)
     return (
       <section className="container page">
         <h1>수정할 글을 불러오지 못했습니다</h1>

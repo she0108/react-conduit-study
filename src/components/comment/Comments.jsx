@@ -14,7 +14,7 @@ export default function Comments({ slug }) {
   const { user } = useCurrentUser();
   const token = useAuthStore((state) => state.token);
 
-  const { data, error, isPending, isLoadingError } = useQuery({
+  const { data, error, isPending } = useQuery({
     queryKey: ["comments", slug, token],
     queryFn: () => getComments(slug),
   });
@@ -22,7 +22,7 @@ export default function Comments({ slug }) {
   return (
     <section className={styles.section} aria-label="댓글">
       <h2>댓글</h2>
-      {isLoadingError ? (
+      {error ? (
         <ErrorMessages error={error} />
       ) : isPending ? (
         <p role="status">댓글을 불러오고 있습니다…</p>
