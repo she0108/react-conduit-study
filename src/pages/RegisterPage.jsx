@@ -1,38 +1,34 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link, Navigate, useLocation, useNavigate } from "react-router";
 
-import { register } from "../apis/auth.js";
+import { register as registerUser } from "../apis/auth.js";
 import { useAuth } from "../hooks/useAuth.js";
+import { emailRules, notBlank } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
+import FieldError from "../components/common/FieldError.jsx";
 
 export default function RegisterPage() {
   const { user, saveSession } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
   const [error, setError] = useState(null);
-  const [pending, setPending] = useState(false);
 
   const from = location.state?.from || "/";
 
   if (user) return <Navigate to={from} replace />;
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-
-    if (!username.trim() || !email.trim() || !password) {
-      setError("이름, 이메일, 비밀번호를 입력해 주세요.");
-      return;
-    }
-
-    setPending(true);
+  async function onSubmit({ username, email, password }) {
     setError(null);
 
     try {
-      const data = await register({
+      const data = await registerUser({
         username: username.trim(),
         email: email.trim(),
         password,
@@ -42,8 +38,6 @@ export default function RegisterPage() {
       navigate(from, { replace: true });
     } catch (error) {
       setError(error);
-    } finally {
-      setPending(false);
     }
   }
 
@@ -56,39 +50,38 @@ export default function RegisterPage() {
         </Link>
       </p>
       <ErrorMessages error={error} />
-      <form onSubmit={handleSubmit}>
-        <fieldset disabled={pending}>
+      <form noValidate onSubmit={handleSubmit(onSubmit)}>
+        <fieldset disabled={isSubmitting}>
           <label>
             사용자 이름
             <input
               autoComplete="username"
-              required
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
+              {...register("username", notBlank("이름을 입력해 주세요."))}
             />
           </label>
+          <FieldError error={errors.username} />
           <label>
             이메일
             <input
               type="email"
               autoComplete="email"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              {...register("email", emailRules)}
             />
           </label>
+          <FieldError error={errors.email} />
           <label>
             비밀번호
             <input
               type="password"
               autoComplete="new-password"
-              required
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              {...register("password", {
+                required: "비밀번호를 입력해 주세요.",
+              })}
             />
           </label>
+          <FieldError error={errors.password} />
           <button className="primary" type="submit">
-            {pending ? "가입 중…" : "회원가입"}
+            {isSubmitting ? "가입 중…" : "회원가입"}
           </button>
         </fieldset>
       </form>
