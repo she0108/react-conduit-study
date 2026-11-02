@@ -14,7 +14,7 @@ export default function ArticlePage() {
   return <ArticleContent key={`${slug}:${user?.token || ''}`} slug={slug} />
 }
 function ArticleContent({ slug }) {
-  const { handleAuthError } = useAuth()
+  const { user, handleAuthError } = useAuth()
   const [article, setArticle] = useState(null)
   const [error, setError] = useState(null)
   const [attempt, setAttempt] = useState(0)
@@ -62,6 +62,14 @@ function ArticleContent({ slug }) {
           <div className={styles.toolbar}>
             <ArticleMeta article={article} />
             <FavoriteButton article={article} onChange={setArticle} />
+            {user?.username === article.author.username && (
+              <Link
+                className="button"
+                to={`/editor/${encodeURIComponent(article.slug)}`}
+              >
+                글 수정
+              </Link>
+            )}
           </div>
         </div>
       </header>

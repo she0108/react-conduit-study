@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router'
 import Layout from './components/Layout.jsx'
 import HomePage from './pages/HomePage.jsx'
+import EditorPage from './pages/EditorPage.jsx'
 import ArticlePage from './pages/ArticlePage.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import LoginPage from './pages/LoginPage.jsx'
@@ -27,7 +28,9 @@ export default function App() {
           />
         ))}
         <Route element={<ProtectedRoute />}>
-          {['editor', 'editor/:slug', 'settings'].map((path) => (
+          <Route path="editor" element={<EditorPage />} />
+          <Route path="editor/:slug" element={<EditorPage />} />
+          {['settings'].map((path) => (
             <Route
               key={path}
               path={path}
