@@ -3,7 +3,6 @@ import { Link, Navigate, useLocation, useNavigate } from "react-router";
 
 import { register } from "../apis/auth.js";
 import { useAuth } from "../hooks/useAuth.js";
-import { getReturnPath } from "../utils/returnPath.js";
 import ErrorMessages from "../components/ErrorMessages.jsx";
 
 export default function RegisterPage() {
@@ -17,7 +16,7 @@ export default function RegisterPage() {
   const [error, setError] = useState(null);
   const [pending, setPending] = useState(false);
 
-  const from = getReturnPath(location.state?.from);
+  const from = location.state?.from || "/";
 
   if (user) return <Navigate to={from} replace />;
 
