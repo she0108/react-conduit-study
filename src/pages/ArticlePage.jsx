@@ -4,6 +4,7 @@ import Markdown from 'react-markdown'
 import { getArticle } from '../apis/articles.js'
 import { useAuth } from '../hooks/useAuth.js'
 import ArticleMeta from '../components/ArticleMeta.jsx'
+import FavoriteButton from '../components/FavoriteButton.jsx'
 import ErrorMessages from '../components/ErrorMessages.jsx'
 import styles from './ArticlePage.module.css'
 export default function ArticlePage() {
@@ -59,6 +60,7 @@ function ArticleContent({ slug }) {
           <h1>{article.title}</h1>
           <div className={styles.toolbar}>
             <ArticleMeta article={article} />
+            <FavoriteButton article={article} onChange={setArticle} />
           </div>
         </div>
       </header>

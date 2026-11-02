@@ -84,7 +84,11 @@ export default function HomePage() {
               </Link>
             )}
           </nav>
-          <ArticleList {...list} onRetry={list.refresh} />
+          <ArticleList
+            {...list}
+            onRetry={list.refresh}
+            onArticleChange={list.updateArticle}
+          />
           {!list.loading && !list.error && (
             <Pagination page={page} total={list.total} />
           )}

@@ -1,10 +1,14 @@
 import { Link } from 'react-router'
 import ArticleMeta from './ArticleMeta.jsx'
+import FavoriteButton from './FavoriteButton.jsx'
 import styles from './ArticleCard.module.css'
-export default function ArticleCard({ article }) {
+export default function ArticleCard({ article, onArticleChange }) {
   return (
     <article className={styles.card}>
-      <ArticleMeta article={article} />
+      <div className={styles.top}>
+        <ArticleMeta article={article} />
+        <FavoriteButton article={article} onChange={onArticleChange} />
+      </div>
       <Link
         to={`/article/${encodeURIComponent(article.slug)}`}
         className={styles.preview}

@@ -29,3 +29,15 @@
   justify-content: flex-end;
   margin-top: 0.6rem;
 }
+
+.top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.top button {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.55rem;
+}
