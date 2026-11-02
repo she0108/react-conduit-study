@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router'
 import Layout from './components/Layout.jsx'
 import HomePage from './pages/HomePage.jsx'
+import SettingsPage from './pages/SettingsPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import EditorPage from './pages/EditorPage.jsx'
 import ArticlePage from './pages/ArticlePage.jsx'
@@ -24,18 +25,7 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="editor" element={<EditorPage />} />
           <Route path="editor/:slug" element={<EditorPage />} />
-          {['settings'].map((path) => (
-            <Route
-              key={path}
-              path={path}
-              element={
-                <section className="container page">
-                  <h1>Conduit</h1>
-                  <p>화면을 준비하고 있습니다.</p>
-                </section>
-              }
-            />
-          ))}
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>
