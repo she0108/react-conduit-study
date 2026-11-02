@@ -15,7 +15,7 @@ export function useArticles({
 
   const token = user?.token;
 
-  const [revision, setRevision] = useState(0);
+  const [reloadCount, setReloadCount] = useState(0);
   const [result, setResult] = useState(null);
 
   // 조건이 바뀐 첫 렌더부터 이전 결과를 숨기고, 현재 조건의 응답이 도착할 때까지 로딩으로 표시한다.
@@ -26,7 +26,7 @@ export function useArticles({
     favorited,
     page,
     token,
-    revision,
+    reloadCount,
   ]);
 
   useEffect(() => {
@@ -67,13 +67,13 @@ export function useArticles({
     favorited,
     page,
     token,
-    revision,
+    reloadCount,
     key,
     handleAuthError,
   ]);
 
   function refresh() {
-    setRevision((value) => value + 1);
+    setReloadCount((value) => value + 1);
   }
 
   function updateArticleFavorite(article) {

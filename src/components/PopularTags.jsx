@@ -9,7 +9,7 @@ import styles from "./PopularTags.module.css";
 export default function PopularTags({ className = "" }) {
   const [tags, setTags] = useState(null);
   const [tagsError, setTagsError] = useState(null);
-  const [attempt, setAttempt] = useState(0);
+  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -26,12 +26,12 @@ export default function PopularTags({ className = "" }) {
       });
 
     return () => controller.abort();
-  }, [attempt]);
+  }, [reloadCount]);
 
   function retryTags() {
     setTagsError(null);
     setTags(null);
-    setAttempt((value) => value + 1);
+    setReloadCount((value) => value + 1);
   }
 
   return (

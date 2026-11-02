@@ -47,7 +47,7 @@ function Profile({ username, favorites }) {
 
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
-  const [attempt, setAttempt] = useState(0);
+  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -64,7 +64,7 @@ function Profile({ username, favorites }) {
       });
 
     return () => controller.abort();
-  }, [username, attempt, handleAuthError]);
+  }, [username, reloadCount, handleAuthError]);
 
   const maxPage = Math.max(1, Math.ceil(list.total / PAGE_SIZE));
 
@@ -97,7 +97,7 @@ function Profile({ username, favorites }) {
         <button
           onClick={() => {
             setError(null);
-            setAttempt((value) => value + 1);
+            setReloadCount((value) => value + 1);
           }}
         >
           다시 시도

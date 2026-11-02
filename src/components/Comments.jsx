@@ -15,7 +15,7 @@ export default function Comments({ slug }) {
 
   const [comments, setComments] = useState(null);
   const [error, setError] = useState(null);
-  const [attempt, setAttempt] = useState(0);
+  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -32,11 +32,11 @@ export default function Comments({ slug }) {
       });
 
     return () => controller.abort();
-  }, [slug, attempt, handleAuthError]);
+  }, [slug, reloadCount, handleAuthError]);
 
   function retry() {
     setError(null);
-    setAttempt((value) => value + 1);
+    setReloadCount((value) => value + 1);
   }
 
   return (

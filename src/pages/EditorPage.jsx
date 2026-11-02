@@ -31,7 +31,7 @@ function Editor({ slug }) {
   const [error, setError] = useState(null);
   const [pending, setPending] = useState(false);
   const [tagInput, setTagInput] = useState("");
-  const [attempt, setAttempt] = useState(0);
+  const [reloadCount, setReloadCount] = useState(0);
 
   useEffect(() => {
     if (!slug) return;
@@ -63,7 +63,7 @@ function Editor({ slug }) {
       });
 
     return () => controller.abort();
-  }, [slug, user.username, attempt, handleAuthError]);
+  }, [slug, user.username, reloadCount, handleAuthError]);
 
   function handleChange(event) {
     setArticle((previous) => ({
@@ -151,7 +151,7 @@ function Editor({ slug }) {
         <button
           onClick={() => {
             setLoadState({ status: "loading", error: null });
-            setAttempt((value) => value + 1);
+            setReloadCount((value) => value + 1);
           }}
         >
           다시 시도

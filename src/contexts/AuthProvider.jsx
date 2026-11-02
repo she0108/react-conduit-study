@@ -10,7 +10,7 @@ export default function AuthProvider({ children }) {
     status: getToken() ? "loading" : "anonymous",
     error: null,
   }));
-  const [attempt, setAttempt] = useState(0);
+  const [reloadCount, setReloadCount] = useState(0);
 
   const restoreController = useRef(null);
 
@@ -35,7 +35,7 @@ export default function AuthProvider({ children }) {
       });
 
     return () => controller.abort();
-  }, [attempt]);
+  }, [reloadCount]);
 
   const startSession = useCallback((user) => {
     restoreController.current?.abort();
@@ -71,7 +71,7 @@ export default function AuthProvider({ children }) {
 
   function retry() {
     setAuth({ user: null, status: "loading", error: null });
-    setAttempt((value) => value + 1);
+    setReloadCount((value) => value + 1);
   }
 
   return (
