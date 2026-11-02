@@ -5,11 +5,9 @@ import { getToken, removeToken, saveToken } from "../utils/authStorage.js";
 import { AuthContext } from "./AuthContext.js";
 
 export default function AuthProvider({ children }) {
-  const [auth, setAuth] = useState(() => ({
-    user: null,
-    status: getToken() ? "loading" : "anonymous",
-    error: null,
-  }));
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(() => Boolean(getToken()));
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!getToken()) return;
@@ -17,30 +15,32 @@ export default function AuthProvider({ children }) {
     const controller = new AbortController();
 
     getCurrentUser(controller.signal)
-      .then(({ user }) => {
-        if (!controller.signal.aborted)
-          setAuth({ user, status: "authenticated", error: null });
+      .then((data) => {
+        if (!controller.signal.aborted) setUser(data.user);
       })
       .catch((error) => {
         if (controller.signal.aborted) return;
 
-        if (error.status === 401) {
-          removeToken();
-          setAuth({ user: null, status: "anonymous", error: null });
-        } else setAuth({ user: null, status: "error", error });
+        // 만료된 토큰은 지우고, 일시적인 실패는 토큰을 유지한 채 오류를 보여 준다.
+        if (error.status === 401) removeToken();
+        else setError(error);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
       });
 
     return () => controller.abort();
   }, []);
 
-  function saveSession(user) {
-    saveToken(user.token);
-    setAuth({ user, status: "authenticated", error: null });
+  function saveSession(nextUser) {
+    saveToken(nextUser.token);
+    setUser(nextUser);
   }
 
   const logout = useCallback(() => {
     removeToken();
-    setAuth({ user: null, status: "anonymous", error: null });
+    setUser(null);
+    setError(null);
   }, []);
 
   const handleAuthError = useCallback(
@@ -51,7 +51,9 @@ export default function AuthProvider({ children }) {
   );
 
   return (
-    <AuthContext value={{ ...auth, saveSession, logout, handleAuthError }}>
+    <AuthContext
+      value={{ user, loading, error, saveSession, logout, handleAuthError }}
+    >
       {children}
     </AuthContext>
   );

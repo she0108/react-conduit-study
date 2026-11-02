@@ -2,16 +2,16 @@ import { useAuth } from "../hooks/useAuth.js";
 import ErrorMessages from "./ErrorMessages.jsx";
 
 export default function AuthStatus({ children }) {
-  const { status, error, logout } = useAuth();
+  const { loading, error, logout } = useAuth();
 
-  if (status === "loading")
+  if (loading)
     return (
       <div className="container status" role="status">
         로그인 정보를 확인하고 있습니다…
       </div>
     );
 
-  if (status === "error")
+  if (error)
     return (
       <section className="container page">
         <h1>로그인 정보를 확인하지 못했습니다</h1>
