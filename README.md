@@ -37,12 +37,12 @@ npm run preview
 
 ## 코드를 읽는 순서
 
-- `src/apis/`: 공통 HTTP 처리와 각 엔드포인트. `client.js`는 응답·서버 오류·취소를 처리하며 React를 import하지 않습니다.
+- `src/apis/`: 공통 HTTP 처리와 각 엔드포인트. `client.js`는 응답과 서버 오류를 처리하며 React를 import하지 않습니다.
 - `src/contexts/`, `src/hooks/useAuth.js`: 현재 사용자, 토큰 복원, 로그인·로그아웃, 인증 실패 처리.
 - `src/hooks/useArticles.js`: URL 조건과 인증 변화에 따른 목록 조회, effect cleanup과 오래된 응답 무시.
 - `src/pages/`: URL 해석, 페이지 데이터와 폼 상태.
 - `src/components/`: Layout, 반복 UI, 댓글, 명시적인 props와 callback.
-- `src/utils/`: 토큰 저장, 날짜 표시, 페이지·복귀 경로 검증.
+- `src/utils/`: 토큰 저장, 날짜 표시, 페이지 값 보정.
 - `src/styles/global.css`: 공통 기본 요소·변수. 각 화면·컴포넌트 스타일은 인접한 CSS Modules에 둡니다.
 
 읽기 흐름은 `URL → page/useArticles → API → fetch → state → props → UI`입니다. 쓰기는 이벤트 핸들러에서 요청하고 성공 응답을 상태에 반영합니다.
@@ -51,7 +51,7 @@ npm run preview
 | --------------- | ----------------------------------------------------- |
 | props           | `ArticleCard.jsx`의 article                           |
 | state·제어 폼   | `EditorPage.jsx`의 입력과 검증                        |
-| effect·취소     | `useArticles.js`의 AbortController와 cleanup          |
+| effect·취소     | `useArticles.js`의 ignore 플래그와 cleanup            |
 | 상태 끌어올리기 | `FavoriteButton.jsx` → onChange → 목록·상세 소유 상태 |
 | Context         | `AuthProvider.jsx` → useAuth → Header·ProtectedRoute  |
 | URL 상태        | HomePage·ProfilePage의 search params와 페이지 링크    |
@@ -60,13 +60,15 @@ npm run preview
 
 [공식 RealWorld API](https://docs.realworld.show/specifications/frontend/api/)를 사용합니다. 공개 데모에서는 비로그인 사용자는 데모 글만, 로그인 사용자는 본인과 데모 계정의 글만 볼 수 있습니다. 팔로우·개인 피드는 데모 작성자로 확인하세요. 서로 다른 일반 계정 사이의 글 공유는 제한됩니다.
 
-토큰만 localStorage에 저장하고, 시작할 때 `/user`로 사용자를 복원합니다. 401이면 토큰을 지우고, 일시적인 연결·서버 오류면 토큰을 유지한 채 재시도 화면을 보여 줍니다. 비밀번호·사용자 객체 전체는 저장하지 않습니다. 이 토큰 저장 방식은 학습용 API 계약에 따른 선택입니다.
+토큰만 localStorage에 저장하고, 시작할 때 `/user`로 사용자를 복원합니다. 401이면 토큰을 지우고, 일시적인 연결·서버 오류면 토큰을 유지한 채 오류 화면과 새로고침 버튼을 보여 줍니다. 비밀번호·사용자 객체 전체는 저장하지 않습니다. 이 토큰 저장 방식은 학습용 API 계약에 따른 선택입니다.
+
+이 예제는 첫 React 프로젝트에서 핵심 흐름을 따라가기 쉽도록 범위를 줄였습니다. 멀티탭 동기화, 자동 재인증, 요청 취소, 조회 재시도 버튼, 범위를 벗어난 페이지 이동은 넣지 않았습니다. 로그인이 만료되면 로그아웃되며 작성 중인 내용은 유지되지 않습니다. 조회에 실패하면 브라우저를 새로고침합니다.
 
 입력 오류는 서버의 필드별 오류와 함께 표시합니다. Markdown은 raw HTML 플러그인 없이 렌더링합니다. 프로필 이미지는 URL 입력 방식이며 실패하면 대체 이미지를 사용합니다.
 
 ## 수동 확인과 배포
 
-본인 학습용 데이터로 가입·로그인·복원·로그아웃, 글 CRUD, 댓글 작성·삭제, 좋아요·해제, 프로필·팔로우·개인 피드, 설정 저장을 확인합니다. 실패 경로는 잘못된 로그인, 공백 입력, 권한 없는 수정 URL, 없는 글, 네트워크 실패·재시도, 빠른 화면 이동, 로그아웃 후 뒤로가기를 확인합니다. 모바일 폭·키보드 이동도 별도로 점검합니다.
+본인 학습용 데이터로 가입·로그인·복원·로그아웃, 글 CRUD, 댓글 작성·삭제, 좋아요·해제, 프로필·팔로우·개인 피드, 설정 저장을 확인합니다. 실패 경로는 잘못된 로그인, 공백 입력, 권한 없는 수정 URL, 없는 글, 네트워크 실패, 빠른 화면 이동, 로그아웃 후 뒤로가기를 확인합니다. 모바일 폭·키보드 이동도 별도로 점검합니다.
 
 2026-11-02 브라우저 사전 확인에서 공개 조회, JSON·인증 CORS, 가입·로그인·현재 사용자 조회, 본인 글 CRUD가 성공했습니다. 공개 API의 가용성과 데이터는 서버 상태에 따라 달라집니다.
 
