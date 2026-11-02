@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
-import { favoriteArticle } from "../apis/articles.js";
+import { favoriteArticle, unfavoriteArticle } from "../apis/articles.js";
 import { useAuth } from "../hooks/useAuth.js";
 import ErrorMessages from "./ErrorMessages.jsx";
 
@@ -27,10 +27,9 @@ export default function FavoriteButton({ article, onFavoriteChange }) {
     setError(null);
 
     try {
-      const { article: updated } = await favoriteArticle(
-        article.slug,
-        article.favorited,
-      );
+      const { article: updated } = article.favorited
+        ? await unfavoriteArticle(article.slug)
+        : await favoriteArticle(article.slug);
 
       await onFavoriteChange(updated);
     } catch (error) {

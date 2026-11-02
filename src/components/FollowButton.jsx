@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
-import { followProfile } from "../apis/profiles.js";
+import { followProfile, unfollowProfile } from "../apis/profiles.js";
 import { useAuth } from "../hooks/useAuth.js";
 import ErrorMessages from "./ErrorMessages.jsx";
 
@@ -29,7 +29,9 @@ export default function FollowButton({ profile, onChange }) {
     setError(null);
 
     try {
-      const data = await followProfile(profile.username, profile.following);
+      const data = profile.following
+        ? await unfollowProfile(profile.username)
+        : await followProfile(profile.username);
 
       onChange(data.profile);
     } catch (error) {

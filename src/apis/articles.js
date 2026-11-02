@@ -30,8 +30,12 @@ export function deleteArticle(slug) {
   return request(articlePath(slug), { method: "DELETE" });
 }
 
-export function favoriteArticle(slug, favorited) {
+export function favoriteArticle(slug) {
   return request(`${articlePath(slug)}/favorite`, {
-    method: favorited ? "DELETE" : "POST",
+    method: "POST",
   });
+}
+
+export function unfavoriteArticle(slug) {
+  return request(`${articlePath(slug)}/favorite`, { method: "DELETE" });
 }

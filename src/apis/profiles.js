@@ -6,8 +6,12 @@ export function getProfile(username, signal) {
   return request(profilePath(username), { signal });
 }
 
-export function followProfile(username, following) {
+export function followProfile(username) {
   return request(`${profilePath(username)}/follow`, {
-    method: following ? "DELETE" : "POST",
+    method: "POST",
   });
+}
+
+export function unfollowProfile(username) {
+  return request(`${profilePath(username)}/follow`, { method: "DELETE" });
 }
