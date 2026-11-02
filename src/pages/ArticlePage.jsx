@@ -100,7 +100,7 @@ export default function ArticlePage() {
             <TagLink key={tag} tag={tag} />
           ))}
         </div>
-        <Comments key={`${slug}:${token}`} slug={slug} />
+        <Comments slug={slug} />
       </div>
     </article>
   );

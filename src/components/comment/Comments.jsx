@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 
 import { getComments } from "../../apis/comments.js";
@@ -12,60 +12,30 @@ import styles from "./Comments.module.css";
 
 export default function Comments({ slug }) {
   const { user } = useCurrentUser();
-  const handleAuthError = useAuthStore((state) => state.handleAuthError);
+  const token = useAuthStore((state) => state.token);
 
-  const [comments, setComments] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    let ignore = false;
-
-    getComments(slug)
-      .then((data) => {
-        if (!ignore) setComments(data.comments);
-      })
-      .catch((error) => {
-        if (!ignore) {
-          handleAuthError(error);
-          setError(error);
-        }
-      });
-
-    return () => {
-      ignore = true;
-    };
-  }, [slug, handleAuthError]);
+  const { data, error, isPending, isLoadingError } = useQuery({
+    queryKey: ["comments", slug, token],
+    queryFn: () => getComments(slug),
+  });
 
   return (
     <section className={styles.section} aria-label="댓글">
       <h2>댓글</h2>
-      {error ? (
+      {isLoadingError ? (
         <ErrorMessages error={error} />
-      ) : comments === null ? (
+      ) : isPending ? (
         <p role="status">댓글을 불러오고 있습니다…</p>
       ) : (
         <>
           {user ? (
-            <CommentForm
-              slug={slug}
-              onCreated={(comment) =>
-                setComments((previous) => [...previous, comment])
-              }
-            />
+            <CommentForm slug={slug} />
           ) : (
             <p>
               <Link to="/login">로그인</Link> 후 댓글을 남겨 보세요.
             </p>
           )}
-          <CommentList
-            slug={slug}
-            comments={comments}
-            onDeleted={(id) =>
-              setComments((previous) =>
-                previous.filter((comment) => comment.id !== id),
-              )
-            }
-          />
+          <CommentList slug={slug} comments={data.comments} />
         </>
       )}
     </section>

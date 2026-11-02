@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import { createComment } from "../../apis/comments.js";
+import { queryClient } from "../../queryClient.js";
 import { useAuthStore } from "../../stores/authStore.js";
 import { notBlank } from "../../utils/formRules.js";
 import ErrorMessages from "../common/ErrorMessages.jsx";
@@ -9,35 +10,33 @@ import FieldError from "../common/FieldError.jsx";
 
 import styles from "./Comments.module.css";
 
-export default function CommentForm({ slug, onCreated }) {
-  const handleAuthError = useAuthStore((state) => state.handleAuthError);
+export default function CommentForm({ slug }) {
+  const token = useAuthStore((state) => state.token);
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
-  const [error, setError] = useState(null);
-
-  async function onSubmit({ body }) {
-    setError(null);
-
-    try {
-      const { comment } = await createComment(slug, body.trim());
-
-      onCreated(comment);
+  const mutation = useMutation({
+    mutationFn: (body) => createComment(slug, body),
+    onSuccess: ({ comment }) => {
+      queryClient.setQueryData(["comments", slug, token], (previous) => ({
+        comments: [...previous.comments, comment],
+      }));
       reset();
-    } catch (error) {
-      handleAuthError(error);
-      setError(error);
-    }
+    },
+  });
+
+  function onSubmit({ body }) {
+    mutation.mutate(body.trim());
   }
 
   return (
     <form className={styles.form} noValidate onSubmit={handleSubmit(onSubmit)}>
-      <ErrorMessages error={error} />
-      <fieldset disabled={isSubmitting}>
+      <ErrorMessages error={mutation.error} />
+      <fieldset disabled={mutation.isPending}>
         <label>
           댓글 작성
           <textarea
@@ -48,7 +47,7 @@ export default function CommentForm({ slug, onCreated }) {
         </label>
         <FieldError error={errors.body} />
         <button className="primary" type="submit">
-          {isSubmitting ? "등록 중…" : "댓글 등록"}
+          {mutation.isPending ? "등록 중…" : "댓글 등록"}
         </button>
       </fieldset>
     </form>

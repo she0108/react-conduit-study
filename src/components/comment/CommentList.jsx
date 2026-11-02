@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router";
 
 import { deleteComment } from "../../apis/comments.js";
+import { queryClient } from "../../queryClient.js";
 import { useAuthStore } from "../../stores/authStore.js";
 import { useCurrentUser } from "../../hooks/useCurrentUser.js";
 import Avatar from "../user/Avatar.jsx";
@@ -10,17 +11,12 @@ import { formatDate } from "../../utils/formatDate.js";
 
 import styles from "./Comments.module.css";
 
-export default function CommentList({ slug, comments, onDeleted }) {
+export default function CommentList({ slug, comments }) {
   return (
     <div>
       {comments.length ? (
         comments.map((comment) => (
-          <Comment
-            key={comment.id}
-            slug={slug}
-            comment={comment}
-            onDeleted={onDeleted}
-          />
+          <Comment key={comment.id} slug={slug} comment={comment} />
         ))
       ) : (
         <p className="muted">아직 댓글이 없습니다. 첫 생각을 남겨 주세요.</p>
@@ -29,28 +25,21 @@ export default function CommentList({ slug, comments, onDeleted }) {
   );
 }
 
-function Comment({ slug, comment, onDeleted }) {
+function Comment({ slug, comment }) {
   const { user } = useCurrentUser();
-  const handleAuthError = useAuthStore((state) => state.handleAuthError);
+  const token = useAuthStore((state) => state.token);
 
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState(null);
+  const mutation = useMutation({
+    mutationFn: () => deleteComment(slug, comment.id),
+    onSuccess: () => {
+      queryClient.setQueryData(["comments", slug, token], (previous) => ({
+        comments: previous.comments.filter((item) => item.id !== comment.id),
+      }));
+    },
+  });
 
-  async function handleDelete() {
-    if (!window.confirm("이 댓글을 삭제할까요?")) return;
-
-    setPending(true);
-    setError(null);
-
-    try {
-      await deleteComment(slug, comment.id);
-      onDeleted(comment.id);
-    } catch (error) {
-      handleAuthError(error);
-      setError(error);
-    } finally {
-      setPending(false);
-    }
+  function handleDelete() {
+    if (window.confirm("이 댓글을 삭제할까요?")) mutation.mutate();
   }
 
   return (
@@ -65,12 +54,16 @@ function Comment({ slug, comment, onDeleted }) {
           {formatDate(comment.createdAt)}
         </time>
         {user?.username === comment.author.username && (
-          <button className="danger" disabled={pending} onClick={handleDelete}>
-            {pending ? "삭제 중…" : "댓글 삭제"}
+          <button
+            className="danger"
+            disabled={mutation.isPending}
+            onClick={handleDelete}
+          >
+            {mutation.isPending ? "삭제 중…" : "댓글 삭제"}
           </button>
         )}
       </footer>
-      <ErrorMessages error={error} />
+      <ErrorMessages error={mutation.error} />
     </article>
   );
 }
