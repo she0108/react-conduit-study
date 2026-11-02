@@ -5,12 +5,11 @@ const baseUrl = (
 ).replace(/\/$/, "");
 
 export class ApiError extends Error {
-  constructor(message, status = 0, errors = null, token = null) {
+  constructor(message, status = 0, errors = null) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.errors = errors;
-    this.token = token;
   }
 }
 
@@ -63,7 +62,6 @@ export async function request(
         "서버에서 요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.",
       response.status,
       data?.errors,
-      token,
     );
   }
 

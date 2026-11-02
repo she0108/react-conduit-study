@@ -46,9 +46,7 @@ export default function AuthProvider({ children }) {
 
   const handleAuthError = useCallback(
     (error) => {
-      // 이전 세션의 늦은 401 응답이 새 세션을 로그아웃시키지 않도록 요청 당시 토큰을 비교한다.
-      if (error.status === 401 && error.token && error.token === getToken())
-        logout();
+      if (error.status === 401) logout();
     },
     [logout],
   );
