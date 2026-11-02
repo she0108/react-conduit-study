@@ -1,13 +1,13 @@
-import { startTransition, useState } from "react";
-import { useNavigate } from "react-router";
+import { useState } from "react";
 
 import { updateUser } from "../apis/auth.js";
 import { useAuth } from "../hooks/useAuth.js";
+import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
 import ErrorMessages from "../components/ErrorMessages.jsx";
 
 export default function SettingsPage() {
-  const { user, updateCurrentUser, logout, handleAuthError } = useAuth();
-  const navigate = useNavigate();
+  const { user, updateCurrentUser, handleAuthError } = useAuth();
+  const logoutToHome = useLogoutToHome();
 
   const [form, setForm] = useState({
     image: user.image || "",
@@ -69,14 +69,6 @@ export default function SettingsPage() {
     } finally {
       setPending(false);
     }
-  }
-
-  function handleLogout() {
-    // 인증 해제와 홈 이동을 함께 반영해 보호 경로의 로그인 이동과 충돌하지 않게 한다.
-    startTransition(() => {
-      logout();
-      navigate("/", { replace: true });
-    });
   }
 
   return (
@@ -146,7 +138,7 @@ export default function SettingsPage() {
         </fieldset>
       </form>
       <hr />
-      <button className="danger" disabled={pending} onClick={handleLogout}>
+      <button className="danger" disabled={pending} onClick={logoutToHome}>
         로그아웃
       </button>
     </section>

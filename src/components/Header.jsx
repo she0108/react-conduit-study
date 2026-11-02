@@ -1,21 +1,13 @@
-import { startTransition } from "react";
-import { Link, NavLink, useNavigate } from "react-router";
+import { Link, NavLink } from "react-router";
 
 import { useAuth } from "../hooks/useAuth.js";
+import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
 
 import styles from "./Header.module.css";
 
 export default function Header() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  function handleLogout() {
-    // 인증 해제와 홈 이동을 함께 반영해 보호 경로가 먼저 로그인 화면으로 이동시키지 않게 한다.
-    startTransition(() => {
-      logout();
-      navigate("/", { replace: true });
-    });
-  }
+  const { user } = useAuth();
+  const logoutToHome = useLogoutToHome();
 
   return (
     <header>
@@ -38,7 +30,7 @@ export default function Header() {
               >
                 {user.username}
               </NavLink>
-              <button className={styles.logout} onClick={handleLogout}>
+              <button className={styles.logout} onClick={logoutToHome}>
                 로그아웃
               </button>
             </>
