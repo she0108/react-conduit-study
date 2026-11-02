@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
 import Markdown from 'react-markdown'
-import { getArticle } from '../apis/articles.js'
+import { deleteArticle, getArticle } from '../apis/articles.js'
 import { useAuth } from '../hooks/useAuth.js'
 import ArticleMeta from '../components/ArticleMeta.jsx'
 import Comments from '../components/Comments.jsx'
@@ -15,6 +15,9 @@ export default function ArticlePage() {
 }
 function ArticleContent({ slug }) {
   const { user, handleAuthError } = useAuth()
+  const navigate = useNavigate()
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState(null)
   const [article, setArticle] = useState(null)
   const [error, setError] = useState(null)
   const [attempt, setAttempt] = useState(0)
@@ -35,6 +38,24 @@ function ArticleContent({ slug }) {
   function retry() {
     setError(null)
     setAttempt((value) => value + 1)
+  }
+  async function handleDelete() {
+    if (
+      deleting ||
+      !window.confirm('이 글을 삭제할까요? 댓글도 함께 삭제됩니다.')
+    )
+      return
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      await deleteArticle(slug)
+      navigate('/', { replace: true })
+    } catch (error) {
+      handleAuthError(error)
+      setDeleteError(error)
+    } finally {
+      setDeleting(false)
+    }
   }
   if (error)
     return (
@@ -70,7 +91,17 @@ function ArticleContent({ slug }) {
                 글 수정
               </Link>
             )}
+            {user?.username === article.author.username && (
+              <button
+                className="danger"
+                disabled={deleting}
+                onClick={handleDelete}
+              >
+                {deleting ? '삭제 중…' : '글 삭제'}
+              </button>
+            )}
           </div>
+          <ErrorMessages error={deleteError} />
         </div>
       </header>
       <div className={`container ${styles.content}`}>
