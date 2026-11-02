@@ -31,10 +31,12 @@ export default function AuthProvider({ children }) {
     return () => controller.abort()
   }, [attempt])
 
-  const setUser = useCallback((user) => {
+  const setUser = useCallback((user, expectedToken) => {
+    if (expectedToken && expectedToken !== getToken()) return false
     restoreController.current?.abort()
     saveToken(user.token)
     setAuth({ user, status: 'authenticated', error: null })
+    return true
   }, [])
   const logout = useCallback(() => {
     restoreController.current?.abort()

@@ -41,13 +41,13 @@ export default function SettingsPage() {
       ...(form.password ? { password: form.password } : {}),
     }
     try {
-      const { user } = await updateUser(payload)
-      setUser(user)
+      const { user: updatedUser } = await updateUser(payload)
+      if (!setUser(updatedUser, user.token)) return
       setForm({
-        image: user.image || '',
-        username: user.username,
-        bio: user.bio || '',
-        email: user.email,
+        image: updatedUser.image || '',
+        username: updatedUser.username,
+        bio: updatedUser.bio || '',
+        email: updatedUser.email,
         password: '',
       })
       setSaved(true)
