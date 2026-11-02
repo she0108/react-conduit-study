@@ -5,17 +5,21 @@ import { useAuth } from "../hooks/useAuth.js";
 import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
 import ErrorMessages from "../components/ErrorMessages.jsx";
 
-export default function SettingsPage() {
-  const { user, updateCurrentUser, handleAuthError } = useAuth();
-  const logoutToHome = useLogoutToHome();
-
-  const [form, setForm] = useState({
+function toSettingsForm(user) {
+  return {
     image: user.image || "",
     username: user.username,
     bio: user.bio || "",
     email: user.email,
     password: "",
-  });
+  };
+}
+
+export default function SettingsPage() {
+  const { user, updateCurrentUser, handleAuthError } = useAuth();
+  const logoutToHome = useLogoutToHome();
+
+  const [form, setForm] = useState(() => toSettingsForm(user));
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
@@ -55,13 +59,7 @@ export default function SettingsPage() {
       // 요청을 시작한 세션이 유지될 때만 사용자 정보와 저장 완료 표시를 갱신한다.
       if (!updateCurrentUser(updatedUser, user.token)) return;
 
-      setForm({
-        image: updatedUser.image || "",
-        username: updatedUser.username,
-        bio: updatedUser.bio || "",
-        email: updatedUser.email,
-        password: "",
-      });
+      setForm(toSettingsForm(updatedUser));
       setSaved(true);
     } catch (error) {
       handleAuthError(error);
