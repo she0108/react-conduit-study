@@ -35,3 +35,17 @@
     font-size: 0.9rem;
   }
 }
+
+.logout {
+  border: 0;
+  padding: 0;
+  color: var(--muted);
+  background: transparent;
+}
+.inner nav {
+  align-items: center;
+}
+.inner nav a {
+  max-width: 180px;
+  overflow-wrap: anywhere;
+}

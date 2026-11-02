@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router'
 import Layout from './components/Layout.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 export default function App() {
   return (
@@ -14,15 +15,26 @@ export default function App() {
             </section>
           }
         />
+        <Route
+          path="login"
+          element={
+            <section className="formPage">
+              <h1>로그인</h1>
+            </section>
+          }
+        />
+        <Route
+          path="register"
+          element={
+            <section className="formPage">
+              <h1>회원가입</h1>
+            </section>
+          }
+        />
         {[
-          'login',
-          'register',
           'article/:slug',
-          'editor',
-          'editor/:slug',
           'profile/:username',
           'profile/:username/favorites',
-          'settings',
         ].map((path) => (
           <Route
             key={path}
@@ -35,6 +47,20 @@ export default function App() {
             }
           />
         ))}
+        <Route element={<ProtectedRoute />}>
+          {['editor', 'editor/:slug', 'settings'].map((path) => (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <section className="container page">
+                  <h1>Conduit</h1>
+                  <p>화면을 준비하고 있습니다.</p>
+                </section>
+              }
+            />
+          ))}
+        </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
