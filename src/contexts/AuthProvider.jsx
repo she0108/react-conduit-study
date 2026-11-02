@@ -57,10 +57,10 @@ export default function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider
+    <AuthContext
       value={{ ...auth, saveSession, logout, retry, handleAuthError }}
     >
       {children}
-    </AuthContext.Provider>
+    </AuthContext>
   );
 }
