@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router'
 import Layout from './components/Layout.jsx'
 import HomePage from './pages/HomePage.jsx'
+import ArticlePage from './pages/ArticlePage.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
@@ -10,13 +11,10 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
+        <Route path="article/:slug" element={<ArticlePage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
-        {[
-          'article/:slug',
-          'profile/:username',
-          'profile/:username/favorites',
-        ].map((path) => (
+        {['profile/:username', 'profile/:username/favorites'].map((path) => (
           <Route
             key={path}
             path={path}
