@@ -1,12 +1,7 @@
 import ArticleCard from "./ArticleCard.jsx";
 import ErrorMessages from "../common/ErrorMessages.jsx";
 
-export default function ArticleList({
-  articles,
-  loading,
-  error,
-  onFavoriteChange,
-}) {
+export default function ArticleList({ articles, loading, error }) {
   if (loading)
     return (
       <p className="status" role="status">
@@ -22,11 +17,7 @@ export default function ArticleList({
   return (
     <div>
       {articles.map((article) => (
-        <ArticleCard
-          key={article.slug}
-          article={article}
-          onFavoriteChange={onFavoriteChange}
-        />
+        <ArticleCard key={article.slug} article={article} />
       ))}
     </div>
   );

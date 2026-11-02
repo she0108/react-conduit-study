@@ -1,40 +1,37 @@
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 
 import { favoriteArticle, unfavoriteArticle } from "../../apis/articles.js";
-import { useAuthStore } from "../../stores/authStore.js";
 import { useCurrentUser } from "../../hooks/useCurrentUser.js";
+import { queryClient } from "../../queryClient.js";
+import { useAuthStore } from "../../stores/authStore.js";
 import ErrorMessages from "../common/ErrorMessages.jsx";
 
-export default function FavoriteButton({ article, onFavoriteChange }) {
+export default function FavoriteButton({ article }) {
   const { user } = useCurrentUser();
-  const handleAuthError = useAuthStore((state) => state.handleAuthError);
+  const token = useAuthStore((state) => state.token);
   const navigate = useNavigate();
 
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState(null);
+  const mutation = useMutation({
+    mutationFn: () =>
+      article.favorited
+        ? unfavoriteArticle(article.slug)
+        : favoriteArticle(article.slug),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["article", article.slug, token], data);
 
-  async function handleClick() {
+      // 목록을 다시 받을 때까지 버튼의 처리 중 상태를 유지한다.
+      return queryClient.invalidateQueries({ queryKey: ["articles"] });
+    },
+  });
+
+  function handleClick() {
     if (!user) {
       navigate("/login");
       return;
     }
 
-    setPending(true);
-    setError(null);
-
-    try {
-      const { article: updated } = article.favorited
-        ? await unfavoriteArticle(article.slug)
-        : await favoriteArticle(article.slug);
-
-      await onFavoriteChange(updated);
-    } catch (error) {
-      handleAuthError(error);
-      setError(error);
-    } finally {
-      setPending(false);
-    }
+    mutation.mutate();
   }
 
   return (
@@ -43,17 +40,17 @@ export default function FavoriteButton({ article, onFavoriteChange }) {
         className={article.favorited ? "primary" : ""}
         aria-pressed={article.favorited}
         aria-label={`${article.favorited ? "좋아요 취소" : "좋아요"}: ${article.title}`}
-        disabled={pending}
+        disabled={mutation.isPending}
         onClick={handleClick}
       >
-        {pending
+        {mutation.isPending
           ? "처리 중…"
           : article.favorited
             ? "♥ 좋아요 취소"
             : "♡ 좋아요"}{" "}
         <span>{article.favoritesCount}</span>
       </button>
-      <ErrorMessages error={error} />
+      <ErrorMessages error={mutation.error} />
     </div>
   );
 }

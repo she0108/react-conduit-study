@@ -62,16 +62,6 @@ function Profile({ username, favorites }) {
     };
   }, [username, handleAuthError]);
 
-  function handleProfileChange(updated) {
-    setProfile(updated);
-    list.refresh();
-  }
-
-  function handleFavoriteChange(article) {
-    if (favorites && !article.favorited) list.refresh();
-    else list.updateArticleFavorite(article);
-  }
-
   if (error)
     return (
       <section className="container page">
@@ -97,7 +87,7 @@ function Profile({ username, favorites }) {
           <h1>{profile.username}</h1>
           <p>{profile.bio || "아직 소개가 없습니다."}</p>
           <div className={styles.actions}>
-            <FollowButton profile={profile} onChange={handleProfileChange} />
+            <FollowButton profile={profile} onChange={setProfile} />
             {user?.username === username && (
               <Link className="button" to="/settings">
                 프로필 설정
@@ -128,7 +118,6 @@ function Profile({ username, favorites }) {
           articles={list.articles}
           loading={list.loading}
           error={list.error}
-          onFavoriteChange={handleFavoriteChange}
         />
         {!list.loading && !list.error && (
           <Pagination page={page} total={list.total} />

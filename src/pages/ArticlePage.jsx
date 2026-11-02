@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router";
 import Markdown from "react-markdown";
 
 import { deleteArticle, getArticle } from "../apis/articles.js";
+import { queryClient } from "../queryClient.js";
 import { useAuthStore } from "../stores/authStore.js";
 import { useCurrentUser } from "../hooks/useCurrentUser.js";
 import TagLink from "../components/article/TagLink.jsx";
@@ -17,58 +18,29 @@ import styles from "./ArticlePage.module.css";
 export default function ArticlePage() {
   const { slug } = useParams();
   const { user } = useCurrentUser();
-
-  // 글이나 세션이 바뀌면 상세·댓글 상태를 함께 초기화한다.
-  return <ArticleContent key={`${slug}:${user?.token || ""}`} slug={slug} />;
-}
-
-function ArticleContent({ slug }) {
-  const { user } = useCurrentUser();
-  const handleAuthError = useAuthStore((state) => state.handleAuthError);
+  const token = useAuthStore((state) => state.token);
   const navigate = useNavigate();
 
-  const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState(null);
-  const [article, setArticle] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    let ignore = false;
-
-    getArticle(slug)
-      .then((data) => {
-        if (!ignore) setArticle(data.article);
-      })
-      .catch((error) => {
-        if (!ignore) {
-          handleAuthError(error);
-          setError(error);
-        }
-      });
-
-    return () => {
-      ignore = true;
-    };
-  }, [slug, handleAuthError]);
-
-  async function handleDelete() {
-    if (!window.confirm("이 글을 삭제할까요? 댓글도 함께 삭제됩니다.")) return;
-
-    setDeleting(true);
-    setDeleteError(null);
-
-    try {
-      await deleteArticle(slug);
+  const { data, error, isPending, isLoadingError } = useQuery({
+    queryKey: ["article", slug, token],
+    queryFn: () => getArticle(slug),
+  });
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteArticle(slug),
+    onSuccess: () => {
       navigate("/", { replace: true });
-    } catch (error) {
-      handleAuthError(error);
-      setDeleteError(error);
-    } finally {
-      setDeleting(false);
-    }
+      queryClient.removeQueries({ queryKey: ["article", slug] });
+      queryClient.invalidateQueries({ queryKey: ["articles"] });
+      queryClient.invalidateQueries({ queryKey: ["tags"] });
+    },
+  });
+
+  function handleDelete() {
+    if (window.confirm("이 글을 삭제할까요? 댓글도 함께 삭제됩니다."))
+      deleteMutation.mutate();
   }
 
-  if (error)
+  if (isLoadingError)
     return (
       <section className="container page">
         <h1>
@@ -80,12 +52,14 @@ function ArticleContent({ slug }) {
       </section>
     );
 
-  if (!article)
+  if (isPending)
     return (
       <p className="container status" role="status">
         글을 불러오고 있습니다…
       </p>
     );
+
+  const { article } = data;
 
   return (
     <article>
@@ -94,20 +68,13 @@ function ArticleContent({ slug }) {
           <h1>{article.title}</h1>
           <div className={styles.toolbar}>
             <ArticleMeta article={article} />
-            <FavoriteButton
-              article={article}
-              onFavoriteChange={(updated) =>
-                setArticle((previous) => ({
-                  ...previous,
-                  favorited: updated.favorited,
-                  favoritesCount: updated.favoritesCount,
-                }))
-              }
-            />
+            <FavoriteButton article={article} />
             <FollowButton
               profile={article.author}
               onChange={(author) =>
-                setArticle((previous) => ({ ...previous, author }))
+                queryClient.setQueryData(["article", slug, token], {
+                  article: { ...article, author },
+                })
               }
             />
             {user?.username === article.author.username && (
@@ -121,14 +88,14 @@ function ArticleContent({ slug }) {
             {user?.username === article.author.username && (
               <button
                 className="danger"
-                disabled={deleting}
+                disabled={deleteMutation.isPending}
                 onClick={handleDelete}
               >
-                {deleting ? "삭제 중…" : "글 삭제"}
+                {deleteMutation.isPending ? "삭제 중…" : "글 삭제"}
               </button>
             )}
           </div>
-          <ErrorMessages error={deleteError} />
+          <ErrorMessages error={deleteMutation.error} />
         </div>
       </header>
       <div className={`container ${styles.content}`}>
@@ -140,7 +107,7 @@ function ArticleContent({ slug }) {
             <TagLink key={tag} tag={tag} />
           ))}
         </div>
-        <Comments slug={slug} />
+        <Comments key={`${slug}:${token}`} slug={slug} />
       </div>
     </article>
   );

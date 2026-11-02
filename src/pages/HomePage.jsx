@@ -56,7 +56,6 @@ export default function HomePage() {
             articles={list.articles}
             loading={list.loading}
             error={list.error}
-            onFavoriteChange={list.updateArticleFavorite}
           />
           {!list.loading && !list.error && (
             <Pagination page={page} total={list.total} />
