@@ -15,92 +15,75 @@ export function useArticles({
 
   const token = user?.token;
 
+  const [articles, setArticles] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [reloadCount, setReloadCount] = useState(0);
-  const [result, setResult] = useState(null);
-
-  // 조건이 바뀐 첫 렌더부터 이전 결과를 숨기고, 현재 조건의 응답이 도착할 때까지 로딩으로 표시한다.
-  const key = JSON.stringify([
-    feed,
-    tag,
-    author,
-    favorited,
-    page,
-    token,
-    reloadCount,
-  ]);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    getArticles(
-      {
-        feed,
-        tag,
-        author,
-        favorited,
-        limit: PAGE_SIZE,
-        offset: (page - 1) * PAGE_SIZE,
-      },
-      controller.signal,
-    )
-      .then((data) => {
-        if (!controller.signal.aborted)
-          setResult({
-            key,
-            articles: data.articles,
-            total: data.articlesCount,
-            error: null,
-          });
-      })
-      .catch((error) => {
+    async function loadArticles() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await getArticles(
+          {
+            feed,
+            tag,
+            author,
+            favorited,
+            limit: PAGE_SIZE,
+            offset: (page - 1) * PAGE_SIZE,
+          },
+          controller.signal,
+        );
+
+        if (controller.signal.aborted) return;
+
+        setArticles(data.articles);
+        setTotal(data.articlesCount);
+      } catch (error) {
         if (controller.signal.aborted) return;
 
         handleAuthError(error);
-        setResult({ key, articles: [], total: 0, error });
-      });
+        setError(error);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+
+    loadArticles();
 
     return () => controller.abort();
-  }, [
-    feed,
-    tag,
-    author,
-    favorited,
-    page,
-    token,
-    reloadCount,
-    key,
-    handleAuthError,
-  ]);
+    // token과 reloadCount는 로그인 변경과 refresh 때 다시 조회하기 위한 의존성이다.
+  }, [feed, tag, author, favorited, page, token, reloadCount, handleAuthError]);
 
   function refresh() {
     setReloadCount((value) => value + 1);
   }
 
   function updateArticleFavorite(article) {
-    setResult(
-      (previous) =>
-        previous && {
-          ...previous,
-          articles: previous.articles.map((item) =>
-            item.slug === article.slug
-              ? {
-                  ...item,
-                  favorited: article.favorited,
-                  favoritesCount: article.favoritesCount,
-                }
-              : item,
-          ),
-        },
+    setArticles((previous) =>
+      previous.map((item) =>
+        item.slug === article.slug
+          ? {
+              ...item,
+              favorited: article.favorited,
+              favoritesCount: article.favoritesCount,
+            }
+          : item,
+      ),
     );
   }
 
-  const current = result?.key === key;
-
   return {
-    articles: current ? result.articles : [],
-    total: current ? result.total : 0,
-    error: current ? result.error : null,
-    loading: !current,
+    articles,
+    total,
+    loading,
+    error,
     refresh,
     updateArticleFavorite,
   };
