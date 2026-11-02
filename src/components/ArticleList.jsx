@@ -6,7 +6,7 @@ export default function ArticleList({
   loading,
   error,
   onRetry,
-  onArticleChange,
+  onFavoriteChange,
 }) {
   if (loading)
     return (
@@ -32,7 +32,7 @@ export default function ArticleList({
         <ArticleCard
           key={article.slug}
           article={article}
-          onArticleChange={onArticleChange}
+          onFavoriteChange={onFavoriteChange}
         />
       ))}
     </div>

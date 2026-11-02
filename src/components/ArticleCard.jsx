@@ -5,12 +5,12 @@ import FavoriteButton from "./FavoriteButton.jsx";
 
 import styles from "./ArticleCard.module.css";
 
-export default function ArticleCard({ article, onArticleChange }) {
+export default function ArticleCard({ article, onFavoriteChange }) {
   return (
     <article className={styles.card}>
       <div className={styles.top}>
         <ArticleMeta article={article} />
-        <FavoriteButton article={article} onChange={onArticleChange} />
+        <FavoriteButton article={article} onFavoriteChange={onFavoriteChange} />
       </div>
       <Link
         to={`/article/${encodeURIComponent(article.slug)}`}

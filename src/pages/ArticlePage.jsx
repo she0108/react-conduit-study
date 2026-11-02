@@ -101,7 +101,7 @@ function ArticleContent({ slug }) {
             <ArticleMeta article={article} />
             <FavoriteButton
               article={article}
-              onChange={(updated) =>
+              onFavoriteChange={(updated) =>
                 setArticle((previous) => ({
                   ...previous,
                   favorited: updated.favorited,

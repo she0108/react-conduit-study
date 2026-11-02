@@ -5,7 +5,7 @@ import { favoriteArticle } from "../apis/articles.js";
 import { useAuth } from "../hooks/useAuth.js";
 import ErrorMessages from "./ErrorMessages.jsx";
 
-export default function FavoriteButton({ article, onChange }) {
+export default function FavoriteButton({ article, onFavoriteChange }) {
   const { user, handleAuthError } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function FavoriteButton({ article, onChange }) {
         article.favorited,
       );
 
-      await onChange(updated);
+      await onFavoriteChange(updated);
     } catch (error) {
       handleAuthError(error);
       setError(error);

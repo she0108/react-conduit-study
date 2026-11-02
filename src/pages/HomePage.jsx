@@ -102,7 +102,7 @@ export default function HomePage() {
           <ArticleList
             {...list}
             onRetry={list.refresh}
-            onArticleChange={list.updateArticle}
+            onFavoriteChange={list.updateArticleFavorite}
           />
           {!list.loading && !list.error && (
             <Pagination page={page} total={list.total} />

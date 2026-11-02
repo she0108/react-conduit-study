@@ -84,9 +84,9 @@ function Profile({ username, favorites }) {
     list.refresh();
   }
 
-  function handleArticleChange(article) {
+  function handleFavoriteChange(article) {
     if (favorites && !article.favorited) list.refresh();
-    else list.updateArticle(article);
+    else list.updateArticleFavorite(article);
   }
 
   if (error)
@@ -152,7 +152,7 @@ function Profile({ username, favorites }) {
         <ArticleList
           {...list}
           onRetry={list.refresh}
-          onArticleChange={handleArticleChange}
+          onFavoriteChange={handleFavoriteChange}
         />
         {!list.loading && !list.error && (
           <Pagination page={page} total={list.total} />

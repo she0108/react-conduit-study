@@ -75,7 +75,7 @@ export function useArticles({
     setRevision((value) => value + 1);
   }
 
-  function updateArticle(article) {
+  function updateArticleFavorite(article) {
     setResult(
       (previous) =>
         previous && {
@@ -101,6 +101,6 @@ export function useArticles({
     error: current ? result.error : null,
     loading: !current,
     refresh,
-    updateArticle,
+    updateArticleFavorite,
   };
 }
