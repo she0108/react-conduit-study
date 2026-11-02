@@ -1,3 +1,4 @@
+import { startTransition } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router'
 import { useAuth } from '../hooks/useAuth.js'
 import styles from './Header.module.css'
@@ -5,8 +6,10 @@ export default function Header() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   function handleLogout() {
-    logout()
-    navigate('/', { replace: true })
+    startTransition(() => {
+      logout()
+      navigate('/', { replace: true })
+    })
   }
   return (
     <header>

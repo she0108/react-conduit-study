@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { startTransition, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { updateUser } from '../apis/auth.js'
 import { useAuth } from '../hooks/useAuth.js'
@@ -59,8 +59,10 @@ export default function SettingsPage() {
     }
   }
   function handleLogout() {
-    logout()
-    navigate('/', { replace: true })
+    startTransition(() => {
+      logout()
+      navigate('/', { replace: true })
+    })
   }
   return (
     <section className="formPage">
