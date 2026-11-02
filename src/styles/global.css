@@ -226,6 +226,10 @@ blockquote {
   color: var(--muted);
 }
 
+.fieldError {
+  color: var(--danger);
+}
+
 @media (max-width: 600px) {
   .container {
     width: calc(100% - 2rem);

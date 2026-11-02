@@ -1,33 +1,30 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Link, Navigate, useLocation, useNavigate } from "react-router";
 
 import { login } from "../apis/auth.js";
 import { useAuth } from "../hooks/useAuth.js";
+import { emailRules } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
+import FieldError from "../components/common/FieldError.jsx";
 
 export default function LoginPage() {
   const { user, saveSession } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
   const [error, setError] = useState(null);
-  const [pending, setPending] = useState(false);
 
   const from = location.state?.from || "/";
 
   if (user) return <Navigate to={from} replace />;
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-
-    if (!email.trim() || !password) {
-      setError("이메일과 비밀번호를 입력해 주세요.");
-      return;
-    }
-
-    setPending(true);
+  async function onSubmit({ email, password }) {
     setError(null);
 
     try {
@@ -37,8 +34,6 @@ export default function LoginPage() {
       navigate(from, { replace: true });
     } catch (error) {
       setError(error);
-    } finally {
-      setPending(false);
     }
   }
 
@@ -51,30 +46,30 @@ export default function LoginPage() {
         </Link>
       </p>
       <ErrorMessages error={error} />
-      <form onSubmit={handleSubmit}>
-        <fieldset disabled={pending}>
+      <form noValidate onSubmit={handleSubmit(onSubmit)}>
+        <fieldset disabled={isSubmitting}>
           <label>
             이메일
             <input
               type="email"
               autoComplete="email"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              {...register("email", emailRules)}
             />
           </label>
+          <FieldError error={errors.email} />
           <label>
             비밀번호
             <input
               type="password"
               autoComplete="current-password"
-              required
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              {...register("password", {
+                required: "비밀번호를 입력해 주세요.",
+              })}
             />
           </label>
+          <FieldError error={errors.password} />
           <button className="primary" type="submit">
-            {pending ? "로그인 중…" : "로그인"}
+            {isSubmitting ? "로그인 중…" : "로그인"}
           </button>
         </fieldset>
       </form>
