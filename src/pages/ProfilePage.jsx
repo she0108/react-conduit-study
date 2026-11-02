@@ -10,7 +10,7 @@ import {
 import { getProfile } from "../apis/profiles.js";
 import { useAuth } from "../hooks/useAuth.js";
 import { useArticles } from "../hooks/useArticles.js";
-import { getPage, PAGE_SIZE } from "../utils/pagination.js";
+import { getPage, getPageCount } from "../utils/pagination.js";
 import Avatar from "../components/Avatar.jsx";
 import FollowButton from "../components/FollowButton.jsx";
 import ArticleList from "../components/ArticleList.jsx";
@@ -66,7 +66,7 @@ function Profile({ username, favorites }) {
     return () => controller.abort();
   }, [username, reloadCount, handleAuthError]);
 
-  const maxPage = Math.max(1, Math.ceil(list.total / PAGE_SIZE));
+  const maxPage = Math.max(1, getPageCount(list.total));
 
   if (
     (params.has("page") && params.get("page") !== String(page)) ||
@@ -150,7 +150,9 @@ function Profile({ username, favorites }) {
           </Link>
         </nav>
         <ArticleList
-          {...list}
+          articles={list.articles}
+          loading={list.loading}
+          error={list.error}
           onRetry={list.refresh}
           onFavoriteChange={handleFavoriteChange}
         />

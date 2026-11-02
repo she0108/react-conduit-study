@@ -1,5 +1,9 @@
 export const PAGE_SIZE = 10;
 
+export function getPageCount(total) {
+  return Math.ceil(total / PAGE_SIZE);
+}
+
 export function getPage(value) {
   const page = Number(value);
 

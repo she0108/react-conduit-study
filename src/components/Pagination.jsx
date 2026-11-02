@@ -1,13 +1,13 @@
 import { Link, useLocation } from "react-router";
 
-import { PAGE_SIZE } from "../utils/pagination.js";
+import { getPageCount } from "../utils/pagination.js";
 
 import styles from "./Pagination.module.css";
 
 export default function Pagination({ page, total }) {
   const location = useLocation();
 
-  const count = Math.ceil(total / PAGE_SIZE);
+  const count = getPageCount(total);
 
   if (count <= 1) return null;
 

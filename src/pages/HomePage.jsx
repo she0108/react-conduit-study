@@ -2,7 +2,7 @@ import { Link, Navigate, useSearchParams } from "react-router";
 
 import { useAuth } from "../hooks/useAuth.js";
 import { useArticles } from "../hooks/useArticles.js";
-import { getPage, PAGE_SIZE } from "../utils/pagination.js";
+import { getPage, getPageCount } from "../utils/pagination.js";
 import ArticleList from "../components/ArticleList.jsx";
 import Pagination from "../components/Pagination.jsx";
 import PopularTags from "../components/PopularTags.jsx";
@@ -20,7 +20,7 @@ export default function HomePage() {
 
   const list = useArticles({ feed, tag, page });
 
-  const maxPage = Math.max(1, Math.ceil(list.total / PAGE_SIZE));
+  const maxPage = Math.max(1, getPageCount(list.total));
   const canonical = new URLSearchParams(
     tag ? { tag, page: String(page) } : { feed, page: String(page) },
   );
@@ -71,7 +71,9 @@ export default function HomePage() {
             )}
           </nav>
           <ArticleList
-            {...list}
+            articles={list.articles}
+            loading={list.loading}
+            error={list.error}
             onRetry={list.refresh}
             onFavoriteChange={list.updateArticleFavorite}
           />
