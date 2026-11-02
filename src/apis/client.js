@@ -46,17 +46,10 @@ export async function request(
   }
 
   if (!response.ok) {
-    const messages = {
-      401: "인증 정보를 확인해 주세요. 로그인이 만료되었을 수 있습니다.",
-      403: "이 작업을 수행할 권한이 없습니다.",
-      404: "요청한 내용을 찾을 수 없습니다.",
-      409: "이미 사용 중인 정보이거나 다른 변경과 충돌했습니다.",
-      422: "입력한 내용을 확인해 주세요.",
-    };
-
     throw new ApiError(
-      messages[response.status] ||
-        "서버에서 요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      response.status === 401
+        ? "인증에 실패했습니다. 로그인 정보를 확인해 주세요."
+        : "요청을 처리하지 못했습니다. 입력 내용을 확인하거나 잠시 후 다시 시도해 주세요.",
       response.status,
       data?.errors,
     );
