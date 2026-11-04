@@ -1,5 +1,5 @@
 .section {
-  max-width: 760px;
+  max-width: 720px;
   margin: 2rem auto 0;
   border-top: 1px solid var(--border);
   padding-top: 1.5rem;
@@ -19,26 +19,25 @@
 
 .comment {
   border: 1px solid var(--border);
-  border-radius: 4px;
-  margin-bottom: 1rem;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
   overflow: hidden;
 }
 
 .comment > p {
-  padding: 1rem;
+  padding: 1.25rem;
   margin: 0;
   white-space: pre-wrap;
-  line-height: 1.65;
+  line-height: 1.5;
 }
 
 .comment footer {
-  background: #f7f8f7;
-  border-top: 1px solid var(--border);
+  background: var(--surface);
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.7rem;
-  padding: 0.7rem 1rem;
+  padding: 0.75rem 1.25rem;
   font-size: 0.8rem;
   color: var(--muted);
 }

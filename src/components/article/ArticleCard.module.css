@@ -1,5 +1,5 @@
 .card {
-  padding: 1.7rem 0;
+  padding: 1.5rem 0;
   border-bottom: 1px solid var(--border);
 }
 
@@ -13,19 +13,15 @@
 }
 
 .preview h2 {
-  font-size: 1.35rem;
-  margin: 1rem 0 0.4rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1rem 0 0.25rem;
 }
 
 .preview p {
   color: var(--muted);
-  line-height: 1.6;
-  margin: 0 0 1rem;
-}
-
-.preview span {
-  color: var(--muted);
-  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0;
 }
 
 .tags {

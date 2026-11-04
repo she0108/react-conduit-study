@@ -10,7 +10,7 @@ export default function Header() {
   const logoutToHome = useLogoutToHome();
 
   return (
-    <header>
+    <header className={styles.header}>
       <div className={`container ${styles.inner}`}>
         <Link to="/" className={styles.brand}>
           conduit
