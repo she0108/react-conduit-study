@@ -19,7 +19,6 @@ export default function ArticleCard({ article, onFavoriteChange }) {
       >
         <h2>{article.title}</h2>
         <p>{article.description}</p>
-        <span>더 읽기…</span>
       </Link>
       <div className={styles.tags}>
         {article.tagList.map((tag) => (

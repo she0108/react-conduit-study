@@ -1,10 +1,11 @@
 .banner {
-  background: #f3f4f3;
+  border-bottom: 1px solid var(--border);
   text-align: center;
   padding: 2rem 0;
 }
 
 .banner h1 {
+  color: var(--heading);
   font-size: 1.6rem;
   margin: 0.8rem 0;
 }
