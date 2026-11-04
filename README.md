@@ -1,6 +1,6 @@
 # Conduit: 라이브러리로 구현
 
-`react-only` 브랜치와 같은 앱을 라이브러리로 옮긴 버전입니다. `git diff react-only react-with-libraries`로 차이를, 커밋 이력으로 라이브러리별 변경을 볼 수 있습니다.
+`react-only` 브랜치와 같은 앱을 라이브러리로 옮긴 버전입니다. `git diff origin/react-only origin/react-with-libraries`로 차이를, 커밋 이력으로 라이브러리별 변경을 볼 수 있습니다.
 
 UI는 [RealWorld](https://github.com/realworld-apps/realworld) 프로젝트의 [Conduit 데모](https://demo.realworld.show/)를 참고했습니다.
 
