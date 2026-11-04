@@ -2,6 +2,8 @@
 
 Vite + React 템플릿에 모의 API를 더한 시작점입니다. 라우팅, Markdown 표시, 화면은 여기서부터 직접 만들어 봅니다.
 
+UI는 [RealWorld](https://github.com/realworld-apps/realworld) 프로젝트의 [Conduit 데모](https://demo.realworld.show/)를 참고했습니다.
+
 | 브랜치                 | 내용                                        |
 | ---------------------- | ------------------------------------------- |
 | `main`                 | 시작점                                      |
