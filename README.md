@@ -2,6 +2,8 @@
 
 props, state, effect를 배운 뒤 실제 기능에서 어떻게 연결되는지 찾아 읽는 예제입니다. 상태, 조회, 폼을 라이브러리 없이 구현했습니다. 같은 기능을 라이브러리로 만든 버전은 `react-with-libraries` 브랜치에 있습니다.
 
+UI는 [RealWorld](https://github.com/realworld-apps/realworld) 프로젝트의 [Conduit 데모](https://demo.realworld.show/)를 참고했습니다.
+
 ## 실행
 
 Node.js 22.12 이상이 필요합니다.
