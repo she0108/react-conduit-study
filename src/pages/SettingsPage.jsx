@@ -5,7 +5,6 @@ import { updateUser } from "../apis/auth.js";
 import { queryClient, saveSession } from "../queryClient.js";
 import { useAuthStore } from "../stores/authStore.js";
 import { useCurrentUser } from "../hooks/useCurrentUser.js";
-import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
 import { emailRules, notBlank } from "../utils/formRules.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
 import FieldError from "../components/common/FieldError.jsx";
@@ -22,7 +21,7 @@ function toSettingsForm(user) {
 
 export default function SettingsPage() {
   const { user } = useCurrentUser();
-  const logoutToHome = useLogoutToHome();
+  const logout = useAuthStore((state) => state.logout);
 
   const {
     register,
@@ -116,11 +115,7 @@ export default function SettingsPage() {
         </fieldset>
       </form>
       <hr />
-      <button
-        className="danger"
-        disabled={mutation.isPending}
-        onClick={logoutToHome}
-      >
+      <button className="danger" disabled={mutation.isPending} onClick={logout}>
         로그아웃
       </button>
     </section>
