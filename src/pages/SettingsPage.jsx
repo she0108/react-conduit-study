@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import { updateUser } from "../apis/auth.js";
 import { useAuth } from "../hooks/useAuth.js";
-import { useLogoutToHome } from "../hooks/useLogoutToHome.js";
 import { getToken } from "../utils/authStorage.js";
 import ErrorMessages from "../components/common/ErrorMessages.jsx";
 
@@ -17,8 +16,7 @@ function toSettingsForm(user) {
 }
 
 export default function SettingsPage() {
-  const { user, saveSession, handleAuthError } = useAuth();
-  const logoutToHome = useLogoutToHome();
+  const { user, saveSession, handleAuthError, logout } = useAuth();
 
   const [form, setForm] = useState(() => toSettingsForm(user));
   const [pending, setPending] = useState(false);
@@ -138,7 +136,7 @@ export default function SettingsPage() {
         </fieldset>
       </form>
       <hr />
-      <button className="danger" disabled={pending} onClick={logoutToHome}>
+      <button className="danger" disabled={pending} onClick={logout}>
         로그아웃
       </button>
     </section>

@@ -1,13 +1,11 @@
 import { Link, NavLink } from "react-router";
 
 import { useAuth } from "../../hooks/useAuth.js";
-import { useLogoutToHome } from "../../hooks/useLogoutToHome.js";
 
 import styles from "./Header.module.css";
 
 export default function Header() {
-  const { user } = useAuth();
-  const logoutToHome = useLogoutToHome();
+  const { user, logout } = useAuth();
 
   return (
     <header className={styles.header}>
@@ -29,7 +27,7 @@ export default function Header() {
               >
                 {user.username}
               </NavLink>
-              <button className={styles.logout} onClick={logoutToHome}>
+              <button className={styles.logout} onClick={logout}>
                 로그아웃
               </button>
             </>
